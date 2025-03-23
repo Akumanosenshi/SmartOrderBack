@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  title: API Restaurant
+  description: API REST pour la gestion d’un restaurant (plats, utilisateurs, réservations, commandes)
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api
+    description: Serveur local de développement
+
+paths:
+  /plats:
+    get:
+      summary: Liste tous les plats
+      tags: [Plats]
+      responses:
+        '200':
+          description: Liste des plats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plat'
+
+  /auth/register:
+    post:
+      summary: Inscription d’un nouvel utilisateur
+      tags: [Authentification]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Utilisateur'
+      responses:
+        '200':
+          description: Utilisateur inscrit avec succès
+
+  /auth/login:
+    post:
+      summary: Connexion d’un utilisateur (JWT)
+      tags: [Authentification]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                motDePasse:
+                  type: string
+      responses:
+        '200':
+          description: Connexion réussie (retourne un token JWT)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+
+  /reservations:
+    post:
+      summary: Créer une réservation
+      tags: [Réservations]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reservation'
+      responses:
+        '200':
+          description: Réservation créée avec succès
+
+  /commandes:
+    post:
+      summary: Passer une commande
+      tags: [Commandes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Commande'
+      responses:
+        '200':
+          description: Commande passée avec succès
+
+components:
+  schemas:
+    Plat:
+      type: object
+      properties:
+        id:
+          type: integer
+        titre:
+          type: string
+        categorie:
+          type: string
+        imageUrl:
+          type: string
+
+    Utilisateur:
+      type: object
+      properties:
+        email:
+          type: string
+        motDePasse:
+          type: string
+
+    Reservation:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        nombrePersonnes:
+          type: integer
+
+    Commande:
+      type: object
+      properties:
+        plats:
+          type: array
+          items:
+            type: integer
+        total:
+          type: number
+          format: double
