@@ -9,10 +9,10 @@ servers:
     description: Serveur local de développement
 
 paths:
-  /plats:
+  /Meal:
     get:
       summary: Liste tous les plats
-      tags: [Plats]
+      tags: [Meals]
       responses:
         '200':
           description: Liste des plats
@@ -21,7 +21,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Plat'
+                  $ref: '#/components/schemas/Meal'
 
   /auth/register:
     post:
@@ -32,7 +32,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Utilisateur'
+              $ref: '#/components/schemas/User'
       responses:
         '200':
           description: Utilisateur inscrit avec succès
@@ -66,7 +66,7 @@ paths:
   /reservations:
     post:
       summary: Créer une réservation
-      tags: [Réservations]
+      tags: [Reservations]
       requestBody:
         required: true
         content:
@@ -77,27 +77,28 @@ paths:
         '200':
           description: Réservation créée avec succès
 
-  /commandes:
+  /Order:
     post:
       summary: Passer une commande
-      tags: [Commandes]
+      tags: [Orders]
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Commande'
+              $ref: '#/components/schemas/Order'
       responses:
         '200':
           description: Commande passée avec succès
 
 components:
   schemas:
-    Plat:
+    Meal:
       type: object
       properties:
         id:
-          type: integer
+          type: string
+          format: uuid
         titre:
           type: string
         categorie:
@@ -105,30 +106,49 @@ components:
         imageUrl:
           type: string
 
-    Utilisateur:
+    User:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+            type: string
         email:
           type: string
         motDePasse:
+          type: string
+        role:
           type: string
 
     Reservation:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
         date:
           type: string
           format: date-time
-        nombrePersonnes:
+        nmbrPeople:
           type: integer
+        user:
+          $ref: '#/components/schemas/User'
 
-    Commande:
+    Order:
       type: object
       properties:
-        plats:
+        id:
+          type: string
+          format: uuid
+        user:
+          $ref: '#/components/schemas/User'
+        meals:
           type: array
           items:
-            type: integer
+            $ref: '#/components/schemas/Meal'
         total:
           type: number
           format: double
