@@ -10,11 +10,8 @@ import java.util.UUID;
 @Setter
 public class Reservation {
     private UUID id;
-
     private LocalDateTime date;
-    private int nmbrPeople;
-
-
+    private Integer nbrPeople;
     private User user;
 
 }

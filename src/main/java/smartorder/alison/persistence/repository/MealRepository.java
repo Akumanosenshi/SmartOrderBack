@@ -28,14 +28,14 @@ public class MealRepository implements MealPort {
     }
 
     @Override
-    public void deleteMeal(String name) {
-        mealRepositoryJPA.findByName(name)
+    public void deleteMeal(String title) {
+        mealRepositoryJPA.findByTitle(title)
                 .ifPresent(mealRepositoryJPA::delete);
     }
 
     @Override
-    public Meal getMeal(String name) {
-        return mealRepositoryJPA.findByName(name)
+    public Meal getMeal(String title) {
+        return mealRepositoryJPA.findByTitle(title)
                 .map(mealEtyMapper::toModel)
                 .orElse(null);
     }

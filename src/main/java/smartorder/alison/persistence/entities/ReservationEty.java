@@ -11,16 +11,22 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@Table(name = "T_RESERVATIONS")
 public class ReservationEty {
     @javax.persistence.Id
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ID")
     private UUID id;
 
+    @Column(name = "DATE")
     private LocalDateTime date;
-    private int nmbrPeople;
+
+    @Column(name = "NBR_PEOPLE")
+    private Integer nbrPeople;
 
     @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
     private UserEty user;
 
 }

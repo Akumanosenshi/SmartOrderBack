@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import smartorder.alison.domain.models.Order;
 import smartorder.alison.domain.ports.OrderPort;
-import smartorder.alison.persistence.entities.OrderEty;
-import smartorder.alison.persistence.mappers.MealEtyMapper;
 import smartorder.alison.persistence.mappers.OrderEtyMapper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,5 +26,27 @@ public class OrderRepository implements OrderPort {
     @Override
     public void deleteOrder(Order order) {
     orderRepositoryJPA.findById(order.getId()).ifPresent(orderRepositoryJPA::delete);
+    }
+
+    @Override
+    public List<Order> getOrders(UUID userId) {
+        return orderRepositoryJPA.findByUserId(userId)
+                .stream()
+                .map(orderEtyMapper::toModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Order> getCurrentOrders(UUID userId) {
+        return orderRepositoryJPA.findByUserId(userId)
+                .stream()
+                .filter((ety) -> !ety.getValidated())
+                .map(orderEtyMapper::toModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Order> getAllOrder() {
+        return orderRepositoryJPA.findAll().stream().map(orderEtyMapper::toModel).collect(Collectors.toList());
     }
 }

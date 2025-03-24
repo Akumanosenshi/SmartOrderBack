@@ -13,8 +13,9 @@ public class Meal {
 
     private UUID id;
 
-    private String titre;
-    private String categorie;
-    private String imageUrl;  // URL de l'image JPG
+    private String title;
+    private String category;
+    private String description;
+    private String image;
 
 }

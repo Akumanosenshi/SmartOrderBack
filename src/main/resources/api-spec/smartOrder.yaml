@@ -13,6 +13,13 @@ paths:
     get:
       summary: Liste tous les plats
       tags: [Meals]
+      operationId: ListMeals
+      parameters:
+        - name: title
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Liste des plats
@@ -22,6 +29,21 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Meal'
+    post:
+      summary: Publier un nouveau plat
+      tags: [ Meals ]
+      operationId: publishMeal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Meal'
+      responses:
+        '200':
+          description: Nouveau plat publié avec succès
+        '409':
+          description: Plat déjà existant
 
   /auth/register:
     post:
@@ -76,6 +98,40 @@ paths:
       responses:
         '200':
           description: Réservation créée avec succès
+        '409':
+            description: Réservation déjà existante
+  /reservations/all:
+      get:
+        summary: Liste des réservations
+        tags: [Reservations]
+        responses:
+          '200':
+            description: Liste des réservations
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Reservation'
+  /reservations/user:
+        get:
+          summary: retrouver une réservation
+          tags: [Reservations]
+          responses:
+            '200':
+              description: Réservation trouvée
+              content:
+                application/json:
+                    schema:
+                      $ref: '#/components/schemas/Reservation'
+            '404':
+                description: Réservation non trouvée
+        parameters:
+          - name: UserEmail
+            in: query
+            required: true
+            schema:
+                type: string
 
   /Order:
     post:
@@ -90,22 +146,82 @@ paths:
       responses:
         '200':
           description: Commande passée avec succès
+  /Order/all:
+    get:
+        summary: Liste des commandes
+        tags: [Orders]
+        responses:
+          '200':
+            description: Liste des commandes
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Order'
+  /Order/user:
+    get:
+      summary: retrouver des commande
+      tags: [Orders]
+      responses:
+        '200':
+          description: Commande trouvée
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '404':
+          description: Commande non trouvée
+    parameters:
+      - name: UserEmail
+        in: query
+        required: true
+        schema:
+          type: string
+
+  /MealsCategories :
+    get:
+      summary: Liste des catégories de plats
+      tags: [MealsCategories]
+      responses:
+        '200':
+          description: Liste des catégories de plats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MealCategory'
+    post:
+      summary: Ajouter une nouvelle catégorie de plat
+      tags: [MealsCategories]
+      parameters:
+        - name: title
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Nouvelle catégorie ajoutée avec succès
+        '409':
+          description: Catégorie déjà existante
 
 components:
   schemas:
     Meal:
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-        titre:
+        title:
           type: string
         categorie:
           type: string
-        imageUrl:
+        description:
           type: string
-
+        image:
+          type: string
     User:
       type: object
       properties:
@@ -131,8 +247,8 @@ components:
           format: uuid
         date:
           type: string
-          format: date-time
-        nmbrPeople:
+          format: local-date
+        nbrPeople:
           type: integer
         user:
           $ref: '#/components/schemas/User'
@@ -149,6 +265,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Meal'
+        date:
+          type: string
+          format: local-date
         total:
           type: number
           format: double
+    MealCategory:
+      type: string
+      description: category of meal
