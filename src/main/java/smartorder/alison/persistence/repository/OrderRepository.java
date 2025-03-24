@@ -20,7 +20,7 @@ public class OrderRepository implements OrderPort {
 
     @Override
     public void saveOrder(Order order) {
-        orderRepositoryJPA.save(order);
+        orderRepositoryJPA.save(orderEtyMapper.toEty(order));
     }
 
     @Override

@@ -20,6 +20,8 @@ public class Order {
 
     private List<Meal> meals;
 
-    private double total;
+    private Boolean validated;
+
+    private Double total;
 
 }

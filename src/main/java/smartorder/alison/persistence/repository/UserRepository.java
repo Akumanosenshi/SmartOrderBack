@@ -13,7 +13,7 @@ public class UserRepository implements UserPort {
     private final UserEtyMapper userEtyMapper;
     @Override
     public void saveUser(User user) {
-        userRepositoryJPA.save(user);
+        userRepositoryJPA.save(userEtyMapper.toEty(user));
     }
     @Override
     public void deleteUser(User user) {

@@ -3,7 +3,6 @@ package smartorder.alison.persistence.entities;
 import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.UUID;
 @Setter
 @Table(name = "T_ORDERS")
 public class OrderEty {
-    @javax.persistence.Id
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")

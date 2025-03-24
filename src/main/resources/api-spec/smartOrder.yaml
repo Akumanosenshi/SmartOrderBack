@@ -216,7 +216,7 @@ components:
       properties:
         title:
           type: string
-        categorie:
+        category:
           type: string
         description:
           type: string
@@ -225,16 +225,13 @@ components:
     User:
       type: object
       properties:
-        id:
+        firstname:
           type: string
-          format: uuid
-        firstName:
-          type: string
-        lastName:
+        lastname:
             type: string
         email:
           type: string
-        motDePasse:
+        mdp:
           type: string
         role:
           type: string

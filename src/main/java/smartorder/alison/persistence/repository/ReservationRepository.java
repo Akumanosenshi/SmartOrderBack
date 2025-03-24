@@ -11,9 +11,10 @@ import smartorder.alison.persistence.mappers.ReservationEtyMapper;
 public class ReservationRepository implements ReservationPort {
     private final ReservationRepositoryJPA reservationRepositoryJPA;
     private final ReservationEtyMapper reservationEtyMapper;
+
     @Override
     public void saveReservation(Reservation reservation) {
-        reservationRepositoryJPA.save(reservation);
+        reservationRepositoryJPA.save(reservationEtyMapper.toEty(reservation));
     }
     @Override
     public void deleteReservation(Reservation reservation) {

@@ -2,8 +2,9 @@ package smartorder.alison.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import smartorder.alison.domain.models.Reservation;
+import smartorder.alison.persistence.entities.ReservationEty;
 
 import java.util.UUID;
 
-public interface ReservationRepositoryJPA extends JpaRepository<Reservation, UUID> {
+public interface ReservationRepositoryJPA extends JpaRepository<ReservationEty, UUID> {
 }
