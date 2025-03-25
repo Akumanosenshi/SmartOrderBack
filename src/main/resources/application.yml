@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: Smart Order API
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/smartOrder'
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: true
+    generate-ddl: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+#  web:
+#    cors:
+#      allowed-origin-patterns: http://localhost:8100
+#      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+#      allowed-headers: *
+#      allow-credentials: true
+#logging:
+#  level:
+#    org.springframework.security: DEBUG
+#    org.springframework.web: DEBUG
+#    root: DEBUG
+
+
+---
+spring.config.activate.on-profile: production
+spring:
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/smartOrder'
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update

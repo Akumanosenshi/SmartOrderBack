@@ -11,6 +11,85 @@ servers:
 paths:
   /Meal:
     get:
+      summary: Retrouver un plat
+      tags: [Meals]
+      parameters:
+        - name: title
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Plat trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meal'
+        '404':
+          description: Plat non trouvé
+    post:
+      summary: Publier un nouveau plat
+      tags: [Meals]
+      operationId: publishMeal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Meal'
+      responses:
+        '200':
+          description: Nouveau plat publié avec succès
+        '409':
+          description: Plat déjà existant
+    put:
+      summary: Mettre à jour un plat
+      tags: [Meals]
+      operationId: updateMeal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Meal'
+      responses:
+        '200':
+          description: Plat mis à jour avec succès
+        '404':
+          description: Plat non trouvé
+    delete:
+      summary: Supprimer un plat
+      tags: [Meals]
+      operationId: deleteMeal
+      parameters:
+        - name: title
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Plat supprimé avec succès
+        '404':
+          description: Plat non trouvé
+
+  /Meal/categories:
+    get:
+      summary: Liste des catégories de plats
+      tags: [Meals]
+      responses:
+        '200':
+          description: Liste des catégories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /Meal/all:
+    get:
       summary: Liste tous les plats
       tags: [Meals]
       operationId: ListMeals
@@ -29,26 +108,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Meal'
-    post:
-      summary: Publier un nouveau plat
-      tags: [ Meals ]
-      operationId: publishMeal
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Meal'
-      responses:
-        '200':
-          description: Nouveau plat publié avec succès
-        '409':
-          description: Plat déjà existant
 
   /auth/register:
     post:
       summary: Inscription d’un nouvel utilisateur
-      tags: [Authentification]
+      tags: [Users]
       requestBody:
         required: true
         content:
@@ -62,7 +126,7 @@ paths:
   /auth/login:
     post:
       summary: Connexion d’un utilisateur (JWT)
-      tags: [Authentification]
+      tags: [Users]
       requestBody:
         required: true
         content:
@@ -85,6 +149,23 @@ paths:
                   token:
                     type: string
 
+  /auth/delete:
+    delete:
+      summary: Supprimer un utilisateur
+      tags: [Users]
+      operationId: deleteUser
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Utilisateur supprimé avec succès
+        '404':
+          description: Utilisateur non trouvé
+
   /reservations:
     post:
       summary: Créer une réservation
@@ -99,39 +180,73 @@ paths:
         '200':
           description: Réservation créée avec succès
         '409':
-            description: Réservation déjà existante
-  /reservations/all:
-      get:
-        summary: Liste des réservations
-        tags: [Reservations]
-        responses:
-          '200':
-            description: Liste des réservations
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Reservation'
-  /reservations/user:
-        get:
-          summary: retrouver une réservation
-          tags: [Reservations]
-          responses:
-            '200':
-              description: Réservation trouvée
-              content:
-                application/json:
-                    schema:
-                      $ref: '#/components/schemas/Reservation'
-            '404':
-                description: Réservation non trouvée
-        parameters:
-          - name: UserEmail
-            in: query
-            required: true
+          description: Réservation déjà existante
+    put:
+      summary: Mettre à jour une réservation
+      tags: [Reservations]
+      operationId: updateReservation
+      requestBody:
+        required: true
+        content:
+          application/json:
             schema:
-                type: string
+              $ref: '#/components/schemas/Reservation'
+      responses:
+        '200':
+          description: Réservation mise à jour avec succès
+        '404':
+          description: Réservation non trouvée
+    delete:
+      summary: Supprimer une réservation
+      tags: [Reservations]
+      operationId: deleteReservation
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Réservation supprimée avec succès
+        '404':
+          description: Réservation non trouvée
+
+  /reservations/all:
+    get:
+      summary: Liste des réservations
+      tags: [Reservations]
+      responses:
+        '200':
+          description: Liste des réservations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+
+  /reservations/user:
+    get:
+      summary: Retrouver une réservation
+      tags: [Reservations]
+      parameters:
+        - name: UserId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Réservation trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '404':
+          description: Réservation non trouvée
 
   /Order:
     post:
@@ -146,22 +261,26 @@ paths:
       responses:
         '200':
           description: Commande passée avec succès
-  /Order/all:
+    delete:
+      summary: Supprimer une commande
+      tags: [Orders]
+      operationId: deleteOrder
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Commande supprimée avec succès
+        '404':
+          description: Commande non trouvée
+
+  /Order/current:
     get:
-        summary: Liste des commandes
-        tags: [Orders]
-        responses:
-          '200':
-            description: Liste des commandes
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Order'
-  /Order/user:
-    get:
-      summary: retrouver des commande
+      summary: Retrouver les commandes en cours
       tags: [Orders]
       responses:
         '200':
@@ -174,40 +293,43 @@ paths:
                   $ref: '#/components/schemas/Order'
         '404':
           description: Commande non trouvée
-    parameters:
-      - name: UserEmail
-        in: query
-        required: true
-        schema:
-          type: string
 
-  /MealsCategories :
+  /Order/all:
     get:
-      summary: Liste des catégories de plats
-      tags: [MealsCategories]
+      summary: Liste des commandes
+      tags: [Orders]
       responses:
         '200':
-          description: Liste des catégories de plats
+          description: Liste des commandes
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MealCategory'
-    post:
-      summary: Ajouter une nouvelle catégorie de plat
-      tags: [MealsCategories]
+                  $ref: '#/components/schemas/Order'
+
+  /Order/user:
+    get:
+      summary: Retrouver des commandes par utilisateur
+      tags: [Orders]
       parameters:
-        - name: title
+        - name: UserId
           in: query
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
-          description: Nouvelle catégorie ajoutée avec succès
-        '409':
-          description: Catégorie déjà existante
+          description: Commande trouvée
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '404':
+          description: Commande non trouvée
 
 components:
   schemas:
@@ -222,13 +344,14 @@ components:
           type: string
         image:
           type: string
+
     User:
       type: object
       properties:
         firstname:
           type: string
         lastname:
-            type: string
+          type: string
         email:
           type: string
         mdp:
@@ -264,10 +387,7 @@ components:
             $ref: '#/components/schemas/Meal'
         date:
           type: string
-          format: local-date
+          format: date
         total:
           type: number
           format: double
-    MealCategory:
-      type: string
-      description: category of meal
