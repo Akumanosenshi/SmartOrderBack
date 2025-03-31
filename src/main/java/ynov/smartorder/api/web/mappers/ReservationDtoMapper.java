@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import smartorder.alison_api.web.dtos.ReservationDto;
 import ynov.smartorder.api.domain.models.Reservation;
 
-@Mapper
+@Mapper(componentModel = "spring", uses = DateDtoMapper.class)
 public interface ReservationDtoMapper {
 
     ReservationDto toDto(Reservation reservation);

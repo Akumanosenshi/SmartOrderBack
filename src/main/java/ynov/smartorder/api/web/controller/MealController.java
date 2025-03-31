@@ -1,7 +1,5 @@
 package ynov.smartorder.api.web.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +20,8 @@ public class MealController implements MealsApi {
 
     @Override
     public ResponseEntity<Void> deleteMeal(String title) {
-        return null;
+        mealRepository.deleteMeal(title);
+        return ResponseEntity.ok().build();
     }
 
     @Override
@@ -31,10 +30,8 @@ public class MealController implements MealsApi {
             return mealRepository.getMeal(title) == null ? ResponseEntity.noContent().build() :
                     ResponseEntity.ok(Collections.singletonList(mealMapper.toDto(mealRepository.getMeal(title))));
         } else {
-            return mealRepository.getMeal(title) == null ? ResponseEntity.noContent().build() :
-                    ResponseEntity.ok(mealRepository.getAllMeals().stream()
-                            .map(mealMapper::toDto)
-                            .toList());
+            return mealRepository.getAllMeals().isEmpty() ? ResponseEntity.noContent().build() :
+                    ResponseEntity.ok(mealRepository.getAllMeals().stream().map(mealMapper::toDto).toList());
         }
     }
 
@@ -51,8 +48,8 @@ public class MealController implements MealsApi {
     }
 
     @Override
-    public ResponseEntity<Void> publishMeal(MealDto mealDto) {
-        mealRepository.createMeal(mealMapper.toEntity(mealDto));
+    public ResponseEntity<Void> publishMeal(List<MealDto> mealDto) {
+        mealDto.forEach(meal -> mealRepository.createMeal(mealMapper.toEntity(meal)));
         return ResponseEntity.ok().build();
     }
 

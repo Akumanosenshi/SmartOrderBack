@@ -25,7 +25,17 @@ public class MealRepository implements MealPort {
 
     @Override
     public void updateMeal(Meal meal) {
-        mealRepositoryJPA.save(mealEtyMapper.toEty(meal));
+        if (meal.getTitle() != null) {
+            mealRepositoryJPA.findByTitle(meal.getTitle())
+                    .ifPresent(existingMealEntity -> {
+                        // Mise à jour champ par champ
+                        existingMealEntity.setCategory(meal.getCategory());
+                        existingMealEntity.setDescription(meal.getDescription());
+                        existingMealEntity.setImage(meal.getImage());
+                        // ⚠️ On modifies pas le title ici car sert de clé métier
+                        mealRepositoryJPA.save(existingMealEntity);
+                    });
+        }
     }
 
     @Override

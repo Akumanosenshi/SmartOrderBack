@@ -5,7 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import ynov.smartorder.api.domain.models.User;
 import ynov.smartorder.api.domain.ports.UserPort;
+import ynov.smartorder.api.persistence.entities.UserEty;
 import ynov.smartorder.api.persistence.mappers.UserEtyMapper;
+
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -17,8 +20,16 @@ public class UserRepository implements UserPort {
     public void saveUser(User user) {
         userRepositoryJPA.save(userEtyMapper.toEty(user));
     }
+
     @Override
-    public void deleteUser(User user) {
-        userRepositoryJPA.findById(user.getId()).ifPresent(userRepositoryJPA::delete);
+    public  User findUser(String email) {
+        return userRepositoryJPA.findByEmail(email)
+                .map(userEtyMapper::toModel)
+                .orElse(null);
+    }
+
+    @Override
+    public void deleteUser(UUID uuid) {
+        userRepositoryJPA.findById(uuid).ifPresent(userRepositoryJPA::delete);
     }
 }

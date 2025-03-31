@@ -37,7 +37,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Meal'
+              type: array
+              items:
+                $ref: '#/components/schemas/Meal'
       responses:
         '200':
           description: Nouveau plat publié avec succès
@@ -112,7 +114,7 @@ paths:
   /auth/register:
     post:
       summary: Inscription d’un nouvel utilisateur
-      tags: [Users]
+      tags: [Auth]
       requestBody:
         required: true
         content:
@@ -121,12 +123,18 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         '200':
-          description: Utilisateur inscrit avec succès
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Incorrect credentials
 
   /auth/login:
     post:
       summary: Connexion d’un utilisateur (JWT)
-      tags: [Users]
+      tags: [Auth]
       requestBody:
         required: true
         content:
@@ -139,20 +147,19 @@ paths:
                 motDePasse:
                   type: string
       responses:
-        '200':
-          description: Connexion réussie (retourne un token JWT)
+        '201':
+          description: Successful registration
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Bad request
 
   /auth/delete:
     delete:
       summary: Supprimer un utilisateur
-      tags: [Users]
+      tags: [Auth]
       operationId: deleteUser
       parameters:
         - name: email
@@ -160,6 +167,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Utilisateur supprimé avec succès
@@ -333,6 +341,18 @@ paths:
 
 components:
   schemas:
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+    Role:
+      type: string
+      enum:
+        - USER
+        - RESTAURANT
     Meal:
       type: object
       properties:
@@ -367,7 +387,7 @@ components:
           format: uuid
         date:
           type: string
-          format: local-date
+          format: date-time
         nbrPeople:
           type: integer
         user:
@@ -387,7 +407,7 @@ components:
             $ref: '#/components/schemas/Meal'
         date:
           type: string
-          format: date
+          format: date-time
         total:
           type: number
           format: double
