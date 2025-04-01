@@ -20,7 +20,8 @@ public class OrderController implements OrdersApi {
 
     @Override
     public ResponseEntity<Void> deleteOrder(UUID id) {
-        return null;
+        orderRepository.deleteOrder(id);
+        return ResponseEntity.ok().build();
     }
 
     @Override
@@ -34,8 +35,8 @@ public class OrderController implements OrdersApi {
 
     @Override
     public ResponseEntity<List<OrderDto>> orderCurrentGet() {
-        return orderRepository.getAllCurrentOrders().isEmpty() ? ResponseEntity.noContent().build() :
-                ResponseEntity.ok(orderRepository.getAllCurrentOrders().stream()
+        return orderRepository.getCurrentOrders().isEmpty() ? ResponseEntity.noContent().build() :
+                ResponseEntity.ok(orderRepository.getCurrentOrders().stream()
                         .map(orderEtyMapper::toDto)
                         .toList());
     }

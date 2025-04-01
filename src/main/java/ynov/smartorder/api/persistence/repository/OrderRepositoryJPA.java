@@ -12,4 +12,7 @@ import java.util.UUID;
 
 public interface OrderRepositoryJPA extends JpaRepository<OrderEty, UUID> {
     List<OrderEty> findByUserId(@NonNull UUID studentId);
+
+    List<OrderEty> findByValidated(Boolean validated);
+
 }

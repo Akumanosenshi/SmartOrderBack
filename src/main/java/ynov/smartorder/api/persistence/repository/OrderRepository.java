@@ -1,11 +1,13 @@
 package ynov.smartorder.api.persistence.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 
 import ynov.smartorder.api.domain.models.Order;
 import ynov.smartorder.api.domain.ports.OrderPort;
+import ynov.smartorder.api.persistence.entities.MealEty;
 import ynov.smartorder.api.persistence.entities.OrderEty;
 import ynov.smartorder.api.persistence.entities.UserEty;
 import ynov.smartorder.api.persistence.mappers.OrderEtyMapper;
@@ -22,25 +24,39 @@ public class OrderRepository implements OrderPort {
     private final OrderRepositoryJPA orderRepositoryJPA;
     private final UserRepositoryJPA userRepositoryJPA;
     private final OrderEtyMapper orderEtyMapper;
+    @Autowired
+    private final MealRepositoryJPA mealRepositoryJPA;
+
 
     @Override
     public void saveOrder(Order order) {
-        Optional<UserEty> userEtyOpt = userRepositoryJPA.findByEmail(order.getUser().getEmail());
+        // 1. Récupère l'utilisateur managé
+        UserEty user = userRepositoryJPA.findByEmail(order.getUser().getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
 
-        if (userEtyOpt.isEmpty()) {
-            throw new IllegalArgumentException("Utilisateur introuvable pour l'email : " + order.getUser().getEmail());
-        }
-
+        // 2. Mapper la commande (sans user ni meals)
         OrderEty orderEty = orderEtyMapper.toEty(order);
-        orderEty.setUser(userEtyOpt.get()); // 🟢 injecte une entité managée !
+        orderEty.setUser(user);
 
+        // 3. 🧠 Pour chaque plat, chercher le MealEty déjà en DB (par titre, id ou autre)
+        List<MealEty> meals = order.getMeals().stream()
+                .map(meal -> mealRepositoryJPA.findByTitle(meal.getTitle()) // ou .findById(...)
+                        .orElseThrow(() -> new IllegalArgumentException("Plat non trouvé : " + meal.getTitle())))
+                .toList();
+
+        // 4. Injection des plats existants
+        orderEty.setMeals(meals);
+
+        // 5. Save !
         orderRepositoryJPA.save(orderEty);
     }
 
 
+
     @Override
-    public void deleteOrder(Order order) {
-    orderRepositoryJPA.findById(order.getId()).ifPresent(orderRepositoryJPA::delete);
+    public void deleteOrder(UUID id) {
+        orderRepositoryJPA.findById(id)
+                .ifPresent(orderRepositoryJPA::delete);
     }
 
     @Override
@@ -52,13 +68,15 @@ public class OrderRepository implements OrderPort {
     }
 
     @Override
-    public List<Order> getCurrentOrders(UUID Id) {
-        return orderRepositoryJPA.findByUserId(Id)
+    public List<Order> getCurrentOrders() {
+        return orderRepositoryJPA.findByValidated(true)
                 .stream()
-                .filter((ety) -> !ety.getValidated())
                 .map(orderEtyMapper::toModel)
                 .collect(Collectors.toList());
     }
+
+
+
 
     @Override
     public List<Order> getAllCurrentOrders() {

@@ -390,6 +390,17 @@ components:
         role:
           type: string
 
+    UserPublic:
+      type: object
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
     Reservation:
       type: object
       properties:
@@ -402,7 +413,7 @@ components:
         nbrPeople:
           type: integer
         user:
-          $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/UserPublic'
         validated:
           type: boolean
 
@@ -413,7 +424,7 @@ components:
           type: string
           format: uuid
         user:
-          $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/UserPublic'
         meals:
           type: array
           items:
@@ -424,3 +435,5 @@ components:
         total:
           type: number
           format: double
+        validated:
+            type: boolean

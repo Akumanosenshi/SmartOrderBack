@@ -26,8 +26,12 @@ public class OrderEty {
     @JoinColumn(name = "USER_ID", nullable = false)
     private UserEty user;
 
-    @OneToMany
-    @Column(name = "MEALS")
+    @ManyToMany
+    @JoinTable(
+            name = "t_orders_meals",
+            joinColumns = @JoinColumn(name = "order_ety_id"),
+            inverseJoinColumns = @JoinColumn(name = "meals_id")
+    )
     private List<MealEty> meals;
 
     @Column(name = "VALIDATED")
