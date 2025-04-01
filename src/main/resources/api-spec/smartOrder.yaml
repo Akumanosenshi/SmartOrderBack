@@ -153,6 +153,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthResponse'
+
         '400':
           description: Bad request
 
@@ -240,7 +241,7 @@ paths:
       summary: Retrouver une réservation
       tags: [Reservations]
       parameters:
-        - name: UserId
+        - name: id
           in: query
           required: true
           schema:
@@ -252,7 +253,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Reservation'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
         '404':
           description: Réservation non trouvée
 
@@ -321,7 +324,7 @@ paths:
       summary: Retrouver des commandes par utilisateur
       tags: [Orders]
       parameters:
-        - name: UserId
+        - name: id
           in: query
           required: true
           schema:
@@ -346,6 +349,9 @@ components:
       properties:
         token:
           type: string
+        id:
+          type: string
+          format: uuid
         role:
           $ref: '#/components/schemas/Role'
     Role:
@@ -363,6 +369,11 @@ components:
         description:
           type: string
         image:
+          type: string
+        price:
+          type: number
+          format: double
+        emoji:
           type: string
 
     User:
@@ -392,6 +403,8 @@ components:
           type: integer
         user:
           $ref: '#/components/schemas/User'
+        validated:
+          type: boolean
 
     Order:
       type: object

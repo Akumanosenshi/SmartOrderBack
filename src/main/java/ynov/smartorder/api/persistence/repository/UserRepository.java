@@ -22,7 +22,7 @@ public class UserRepository implements UserPort {
     }
 
     @Override
-    public  User findUser(String email) {
+    public User findUser(String email) {
         return userRepositoryJPA.findByEmail(email)
                 .map(userEtyMapper::toModel)
                 .orElse(null);

@@ -48,9 +48,9 @@ public class OrderController implements OrdersApi {
     }
 
     @Override
-    public ResponseEntity<List<OrderDto>> orderUserGet(UUID userId) {
-        return orderRepository.getOrders(userId).isEmpty() ? ResponseEntity.noContent().build() :
-                ResponseEntity.ok(orderRepository.getOrders(userId).stream()
+    public ResponseEntity<List<OrderDto>> orderUserGet(UUID Id) {
+        return orderRepository.getOrders(Id).isEmpty() ? ResponseEntity.noContent().build() :
+                ResponseEntity.ok(orderRepository.getOrders(Id).stream()
                         .map(orderEtyMapper::toDto)
                         .toList());
     }

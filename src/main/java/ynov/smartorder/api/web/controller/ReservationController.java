@@ -40,9 +40,9 @@ public class ReservationController implements ReservationsApi {
     }
 
     @Override
-    public ResponseEntity<ReservationDto> reservationsUserGet(UUID userid) {
-        reservationRepository.FindReservation(userid);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<List<ReservationDto>> reservationsUserGet(UUID id) {
+        reservationRepository.FindReservation(id);
+        return ResponseEntity.ok(reservationRepository.FindReservation(id).stream().map(reservationMapper::toDto).toList());
     }
 
     @Override

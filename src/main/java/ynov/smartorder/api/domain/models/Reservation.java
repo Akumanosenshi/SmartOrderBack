@@ -13,5 +13,6 @@ public class Reservation {
     private LocalDateTime date;
     private Integer nbrPeople;
     private User user;
+    private Boolean validated;
 
 }

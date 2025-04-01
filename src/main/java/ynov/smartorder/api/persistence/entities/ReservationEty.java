@@ -27,4 +27,7 @@ public class ReservationEty {
     @JoinColumn(name = "USER_ID", nullable = false)
     private UserEty user;
 
+    @Column(name = "VALIDATED")
+    private Boolean validated;
+
 }

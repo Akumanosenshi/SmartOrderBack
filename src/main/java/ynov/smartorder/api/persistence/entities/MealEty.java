@@ -4,6 +4,7 @@ import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -27,5 +28,11 @@ public class MealEty {
 
     @Column(name = "IMAGE", columnDefinition = "TEXT")
     private String image;
+
+    @Column(name = "EMOJI")
+    private String emoji;
+
+    @Column(name = "PRICE")
+    private BigDecimal price;
 
 }

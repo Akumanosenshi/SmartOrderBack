@@ -13,6 +13,7 @@ spring:
     hibernate:
       ddl-auto: update
 
+
 #  web:
 #    cors:
 #      allowed-origin-patterns: http://localhost:8100
@@ -24,7 +25,12 @@ spring:
 #    org.springframework.security: DEBUG
 #    org.springframework.web: DEBUG
 #    root: DEBUG
-
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 
 ---
 spring.config.activate.on-profile: production
@@ -37,3 +43,5 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  banner:
+    charset: UTF-8

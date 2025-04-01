@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ynov.smartorder.api.domain.models.Meal;
 import ynov.smartorder.api.domain.ports.MealPort;
+import ynov.smartorder.api.persistence.entities.MealEty;
 import ynov.smartorder.api.persistence.mappers.MealEtyMapper;
 import ynov.smartorder.api.persistence.repository.MealRepositoryJPA;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
@@ -19,6 +21,8 @@ public class MealRepository implements MealPort {
 
     @Override
     public void createMeal(Meal meal) {
+        MealEty mealEntity = mealEtyMapper.toEty(meal);
+        mealEntity.setEmoji(meal.getEmoji());
         mealRepositoryJPA.save(mealEtyMapper.toEty(meal));
 
     }

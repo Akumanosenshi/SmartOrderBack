@@ -13,7 +13,8 @@ public interface ReservationPort {
 
     void updateReservation(Reservation reservation);
 
-    Reservation FindReservation(UUID userId);
+    List<Reservation> FindReservation(UUID Id);
 
     List<Reservation> FindAllReservation();
+
 }

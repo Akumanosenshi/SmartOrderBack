@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import ynov.smartorder.api.domain.models.Reservation;
 import ynov.smartorder.api.domain.models.User;
 import ynov.smartorder.api.domain.ports.ReservationPort;
+import ynov.smartorder.api.persistence.entities.ReservationEty;
 import ynov.smartorder.api.persistence.entities.UserEty;
 import ynov.smartorder.api.persistence.mappers.ReservationEtyMapper;
 import ynov.smartorder.api.persistence.mappers.UserEtyMapper;
@@ -39,26 +40,35 @@ public class ReservationRepository implements ReservationPort {
 
     @Override
     public void updateReservation(Reservation reservation) {
-        if (reservation.getId() != null) {
-            reservationRepositoryJPA.findById(reservation.getId())
-                    .ifPresent(existing -> {
-                        existing.setDate(reservation.getDate());
-                        existing.setNbrPeople(reservation.getNbrPeople());
-
-                        if (reservation.getUser() != null && reservation.getUser().getEmail() != null) {
-                            userRepositoryJPA.findByEmail(reservation.getUser().getEmail())
-                                    .ifPresent(existing::setUser);
-                        }
-
-                        reservationRepositoryJPA.save(existing);
-                    });
+        if (reservation.getId() == null) {
+            throw new IllegalArgumentException("❌ ID de réservation manquant pour la mise à jour.");
         }
+
+        reservationRepositoryJPA.findById(reservation.getId())
+                .ifPresent(existing -> {
+                    // Mise à jour des champs simples
+                    existing.setDate(reservation.getDate());
+                    existing.setNbrPeople(reservation.getNbrPeople());
+                    existing.setValidated(reservation.getValidated());
+
+                    // Mise à jour de l'utilisateur (si présent)
+                    if (reservation.getUser() != null && reservation.getUser().getEmail() != null) {
+                        userRepositoryJPA.findByEmail(reservation.getUser().getEmail())
+                                .ifPresent(existing::setUser);
+                    }
+
+                    reservationRepositoryJPA.save(existing);
+                });
     }
 
 
     @Override
-    public Reservation FindReservation(UUID userId) {
-        return reservationRepositoryJPA.findById(userId).map(reservationEtyMapper::toModel).orElse(null);
+    public List<Reservation> FindReservation(UUID id) {
+//        return reservationRepositoryJPA.findByUser_Id(Id).stream()
+//                .map(reservationEtyMapper::toModel)
+//                .toList();
+        List<ReservationEty> reservations = reservationRepositoryJPA.findByUser_Id(id);
+        return reservations.stream().map(reservationEtyMapper::toModel).toList();
     }
 
     @Override

@@ -11,9 +11,9 @@ public interface OrderPort {
 
     void deleteOrder(Order order);
 
-    List<Order> getOrders(UUID userId);
+    List<Order> getOrders(UUID Id);
 
-    List<Order> getCurrentOrders(UUID userId);
+    List<Order> getCurrentOrders(UUID Id);
 
     List<Order> getAllCurrentOrders();
 
