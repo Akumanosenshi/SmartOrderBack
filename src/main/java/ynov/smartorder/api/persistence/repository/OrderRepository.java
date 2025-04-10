@@ -42,7 +42,7 @@ public class OrderRepository implements OrderPort {
         List<MealEty> meals = order.getMeals().stream()
                 .map(meal -> mealRepositoryJPA.findByTitle(meal.getTitle()) // ou .findById(...)
                         .orElseThrow(() -> new IllegalArgumentException("Plat non trouvé : " + meal.getTitle())))
-                .toList();
+                .collect(Collectors.toList());
 
         // 4. Injection des plats existants
         orderEty.setMeals(meals);

@@ -14,6 +14,7 @@ import ynov.smartorder.api.persistence.mappers.UserEtyMapper;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -66,14 +67,14 @@ public class ReservationRepository implements ReservationPort {
     public List<Reservation> FindReservation(UUID id) {
 //        return reservationRepositoryJPA.findByUser_Id(Id).stream()
 //                .map(reservationEtyMapper::toModel)
-//                .toList();
+//                .collect(Collectors.toList());
         List<ReservationEty> reservations = reservationRepositoryJPA.findByUser_Id(id);
-        return reservations.stream().map(reservationEtyMapper::toModel).toList();
+        return reservations.stream().map(reservationEtyMapper::toModel).collect(Collectors.toList());
     }
 
     @Override
     public List<Reservation> FindAllReservation() {
-        return reservationRepositoryJPA.findAll().stream().map(reservationEtyMapper::toModel).toList();
+        return reservationRepositoryJPA.findAll().stream().map(reservationEtyMapper::toModel).collect(Collectors.toList());
     }
 
 }

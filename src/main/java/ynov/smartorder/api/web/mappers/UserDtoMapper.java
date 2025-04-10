@@ -1,8 +1,8 @@
 package ynov.smartorder.api.web.mappers;
 
 import org.mapstruct.Mapper;
-import smartorder.alison_api.web.dtos.UserDto;
 import ynov.smartorder.api.domain.models.User;
+import ynov.smartorder.api.web.dtos.UserDto;
 
 @Mapper
 public interface UserDtoMapper {

@@ -4,11 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ynov.smartorder.api.persistence.repository.OrderRepository;
-import smartorder.alison_api.web.apis.OrdersApi;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import smartorder.alison_api.web.dtos.OrderDto;
+import ynov.smartorder.api.web.apis.OrdersApi;
+import ynov.smartorder.api.web.dtos.OrderDto;
 import ynov.smartorder.api.web.mappers.OrderDtoMapper;
 
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class OrderController implements OrdersApi {
         return orderRepository.getAllOrder().isEmpty() ? ResponseEntity.noContent().build() :
                 ResponseEntity.ok(orderRepository.getAllOrder().stream()
                         .map(orderEtyMapper::toDto)
-                        .toList());
+                        .collect(Collectors.toList()));
 
     }
 
@@ -38,7 +39,7 @@ public class OrderController implements OrdersApi {
         return orderRepository.getCurrentOrders().isEmpty() ? ResponseEntity.noContent().build() :
                 ResponseEntity.ok(orderRepository.getCurrentOrders().stream()
                         .map(orderEtyMapper::toDto)
-                        .toList());
+                        .collect(Collectors.toList()));
     }
 
     @Override
@@ -53,6 +54,6 @@ public class OrderController implements OrdersApi {
         return orderRepository.getOrders(Id).isEmpty() ? ResponseEntity.noContent().build() :
                 ResponseEntity.ok(orderRepository.getOrders(Id).stream()
                         .map(orderEtyMapper::toDto)
-                        .toList());
+                        .collect(Collectors.toList()));
     }
 }

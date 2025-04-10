@@ -9,18 +9,17 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>smartorder</groupId>
+	<groupId>ynov.smartorder</groupId>
 	<artifactId>alison</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>smartorder</name>
+	<name>api</name>
 	<description>smart order back by alison</description>
 	<url/>
 
-
 	<properties>
-		<java.code.base-package>smartorder.alison>api</java.code.base-package>
+		<java.code.base-package>ynov.smartorder.api</java.code.base-package>
 		<project.build.resourcesDirectory>${project.basedir}/src/main/resources</project.build.resourcesDirectory>
-		<java.version>17</java.version>
+		<java.version>11</java.version>
 		<maven.plugin.openapi-generator.version>6.2.1</maven.plugin.openapi-generator.version>
 		<maven.plugin.compiler.version>3.10.1</maven.plugin.compiler.version>
 		<maven.lib.lombok.version>1.18.26</maven.lib.lombok.version>

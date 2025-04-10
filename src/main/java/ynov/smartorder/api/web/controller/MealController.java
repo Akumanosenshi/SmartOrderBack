@@ -3,12 +3,13 @@ package ynov.smartorder.api.web.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import smartorder.alison_api.web.dtos.MealDto;
+import ynov.smartorder.api.web.apis.MealsApi;
+import ynov.smartorder.api.web.dtos.MealDto;
 import ynov.smartorder.api.persistence.repository.MealRepository;
 import ynov.smartorder.api.web.mappers.MealDtoMapper;
-import smartorder.alison_api.web.apis.MealsApi;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -31,7 +32,7 @@ public class MealController implements MealsApi {
                     ResponseEntity.ok(Collections.singletonList(mealMapper.toDto(mealRepository.getMeal(title))));
         } else {
             return mealRepository.getAllMeals().isEmpty() ? ResponseEntity.noContent().build() :
-                    ResponseEntity.ok(mealRepository.getAllMeals().stream().map(mealMapper::toDto).toList());
+                    ResponseEntity.ok(mealRepository.getAllMeals().stream().map(mealMapper::toDto).collect(Collectors.toList()));
         }
     }
 

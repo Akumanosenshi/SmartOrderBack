@@ -2,8 +2,8 @@ package ynov.smartorder.api.web.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import smartorder.alison_api.web.dtos.MealDto;
 import ynov.smartorder.api.domain.models.Meal;
+import ynov.smartorder.api.web.dtos.MealDto;
 
 @Mapper(componentModel = "spring", uses = BigDecimalDtoMapper.class)
 public interface MealDtoMapper {

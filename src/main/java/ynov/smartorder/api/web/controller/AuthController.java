@@ -6,17 +6,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import smartorder.alison_api.web.dtos.AuthLoginPostRequestDto;
-import smartorder.alison_api.web.dtos.AuthResponseDto;
-import smartorder.alison_api.web.dtos.UserDto;
 import ynov.smartorder.api.domain.models.Restaurant;
 import ynov.smartorder.api.domain.models.User;
 import ynov.smartorder.api.domain.ports.RestaurantPort;
 import ynov.smartorder.api.domain.ports.UserPort;
+import ynov.smartorder.api.web.apis.AuthApi;
+import ynov.smartorder.api.web.dtos.AuthLoginPostRequestDto;
+import ynov.smartorder.api.web.dtos.AuthResponseDto;
+import ynov.smartorder.api.web.dtos.RoleDto;
+import ynov.smartorder.api.web.dtos.UserDto;
 import ynov.smartorder.api.web.mappers.UserDtoMapper;
 import ynov.smartorder.api.web.services.JwtService;
-import smartorder.alison_api.web.apis.AuthApi;
-import smartorder.alison_api.web.dtos.RoleDto;
 import java.util.UUID;
 
 @RestController
@@ -36,7 +36,7 @@ public class AuthController implements AuthApi {
     public ResponseEntity<AuthResponseDto> authRegisterPost(@RequestBody UserDto userDto) {
         User user = userDtoMapper.toEntity(userDto);
         userPort.saveUser(user);
-        String token = jwtService.generateTokenWithRole(user.getEmail(), "STUDENT");
+        String token = jwtService.generateTokenWithRole(user.getEmail(), "USER");
         AuthResponseDto response = new AuthResponseDto().token(token).role(RoleDto.USER);
         return ResponseEntity.ok(response);
     }
