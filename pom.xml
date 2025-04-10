@@ -16,6 +16,7 @@
 	<description>smart order back by alison</description>
 	<url/>
 
+
 	<properties>
 		<java.code.base-package>smartorder.alison>api</java.code.base-package>
 		<project.build.resourcesDirectory>${project.basedir}/src/main/resources</project.build.resourcesDirectory>
