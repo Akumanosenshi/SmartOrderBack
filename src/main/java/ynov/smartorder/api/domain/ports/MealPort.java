@@ -18,4 +18,6 @@ public interface MealPort {
     List<Meal> getAllMeals();
 
     List<String> GetAllCategories();
+
+
 }

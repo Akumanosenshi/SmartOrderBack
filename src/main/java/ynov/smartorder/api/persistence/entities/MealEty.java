@@ -23,7 +23,7 @@ public class MealEty {
     @Column(name = "CATEGORY")
     private String category;
 
-    @Column(name = "DESCRITPION")
+    @Column(name = "DESCRIPTION")
     private String description;
 
     @Column(name = "IMAGE", columnDefinition = "TEXT")

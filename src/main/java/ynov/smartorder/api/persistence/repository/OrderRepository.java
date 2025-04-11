@@ -2,17 +2,24 @@ package ynov.smartorder.api.persistence.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 
+import ynov.smartorder.api.domain.models.Meal;
 import ynov.smartorder.api.domain.models.Order;
 import ynov.smartorder.api.domain.ports.OrderPort;
 import ynov.smartorder.api.persistence.entities.MealEty;
 import ynov.smartorder.api.persistence.entities.OrderEty;
 import ynov.smartorder.api.persistence.entities.UserEty;
+import ynov.smartorder.api.persistence.mappers.MealEtyMapper;
 import ynov.smartorder.api.persistence.mappers.OrderEtyMapper;
+import ynov.smartorder.api.web.dtos.MealDto;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,6 +33,8 @@ public class OrderRepository implements OrderPort {
     private final OrderEtyMapper orderEtyMapper;
     @Autowired
     private final MealRepositoryJPA mealRepositoryJPA;
+    private final MealEtyMapper mealEtyMapper;
+
 
 
     @Override
@@ -89,6 +98,11 @@ public class OrderRepository implements OrderPort {
 
     @Override
     public List<Order> getAllOrder() {
-        return orderRepositoryJPA.findAll().stream().map(orderEtyMapper::toModel).collect(Collectors.toList());
+        return orderRepositoryJPA.findAll()
+                .stream()
+                .map(orderEtyMapper::toModel)
+                .collect(Collectors.toList());
     }
+
+
 }

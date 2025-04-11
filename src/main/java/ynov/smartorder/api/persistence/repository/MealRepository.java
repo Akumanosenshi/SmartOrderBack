@@ -66,4 +66,5 @@ public class MealRepository implements MealPort {
     public List<String> GetAllCategories() {
         return mealRepositoryJPA.findDistinctCategories();
     }
+
 }

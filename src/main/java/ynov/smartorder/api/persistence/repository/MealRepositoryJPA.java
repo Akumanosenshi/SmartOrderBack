@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 import ynov.smartorder.api.persistence.entities.MealEty;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,4 +16,7 @@ public interface MealRepositoryJPA extends JpaRepository<MealEty, UUID> {
 
     @Query("SELECT DISTINCT m.category FROM MealEty m")
     List<String> findDistinctCategories();
+
+
+
 }

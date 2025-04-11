@@ -46,7 +46,7 @@ paths:
         '409':
           description: Plat déjà existant
     put:
-      summary: Mettre à jour un plat
+      summary: Mettre à jour un plat (ne modifie par le titre)
       tags: [Meals]
       operationId: updateMeal
       requestBody:
@@ -341,6 +341,34 @@ paths:
                   $ref: '#/components/schemas/Order'
         '404':
           description: Commande non trouvée
+  /statistics:
+    get:
+      summary: Récupérer les statistiques du restaurant sur une période
+      tags: [ Statistics ]
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          description: Date de début de la période
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          required: true
+          description: Date de fin de la période
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Statistiques calculées avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statistics'
+        '400':
+          description: Requête invalide (dates manquantes ou incorrectes)
 
 components:
   schemas:
@@ -437,3 +465,31 @@ components:
           format: double
         validated:
             type: boolean
+    Statistics:
+      type: object
+      properties:
+        topMeals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Meal'
+        totalOrders:
+          type: integer
+        totalRevenue:
+          type: number
+          format: double
+        averageCart:
+          type: number
+          format: double
+        busiestOrderHour:
+          type: string
+        busiestReservationHour:
+          type: string
+        totalReservations:
+          type: integer
+        averagePeoplePerReservation:
+          type: number
+          format: double
+        topCategories:
+          type: array
+          items:
+            type: string
