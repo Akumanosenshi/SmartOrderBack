@@ -19,9 +19,16 @@ public interface OrderPort {
 
     List<Order> getCurrentOrders();
 
-    List<Order> getAllCurrentOrders();
-
     List<Order> getAllOrder();
 
+    void validateOrder(UUID id);
+
+    List<Meal> getTopMeals(LocalDateTime start, LocalDateTime end);
+
+    int getTotalOrders(LocalDateTime start, LocalDateTime end);
+
+    double getTotalRevenue(LocalDateTime start, LocalDateTime end);
+
+    double getAverageCart(LocalDateTime start, LocalDateTime end);
 
 }

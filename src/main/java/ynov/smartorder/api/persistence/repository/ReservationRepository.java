@@ -11,6 +11,7 @@ import ynov.smartorder.api.persistence.entities.UserEty;
 import ynov.smartorder.api.persistence.mappers.ReservationEtyMapper;
 import ynov.smartorder.api.persistence.mappers.UserEtyMapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -65,9 +66,6 @@ public class ReservationRepository implements ReservationPort {
 
     @Override
     public List<Reservation> FindReservation(UUID id) {
-//        return reservationRepositoryJPA.findByUser_Id(Id).stream()
-//                .map(reservationEtyMapper::toModel)
-//                .collect(Collectors.toList());
         List<ReservationEty> reservations = reservationRepositoryJPA.findByUser_Id(id);
         return reservations.stream().map(reservationEtyMapper::toModel).collect(Collectors.toList());
     }
@@ -75,6 +73,28 @@ public class ReservationRepository implements ReservationPort {
     @Override
     public List<Reservation> FindAllReservation() {
         return reservationRepositoryJPA.findAll().stream().map(reservationEtyMapper::toModel).collect(Collectors.toList());
+    }
+
+    @Override
+    public int getTotalReservations(LocalDateTime start, LocalDateTime end) {
+        return (int) reservationRepositoryJPA.findAll()
+                .stream()
+                .filter(reservationEty -> reservationEty.getDate().isAfter(start) && reservationEty.getDate().isBefore(end)).count();
+    }
+
+    @Override
+    public int getAveragePeoplePerReservation(LocalDateTime start, LocalDateTime end) {
+        List<ReservationEty> reservations = reservationRepositoryJPA.findAll()
+                .stream()
+                .filter(reservationEty -> reservationEty.getDate().isAfter(start) && reservationEty.getDate().isBefore(end))
+                .collect(Collectors.toList());
+
+        if (reservations.isEmpty()) {
+            return 0;
+        }
+
+        int totalPeople = reservations.stream().mapToInt(ReservationEty::getNbrPeople).sum();
+        return totalPeople / reservations.size();
     }
 
 }

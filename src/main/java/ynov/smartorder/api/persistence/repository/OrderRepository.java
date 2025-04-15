@@ -12,6 +12,7 @@ import ynov.smartorder.api.domain.ports.OrderPort;
 import ynov.smartorder.api.persistence.entities.MealEty;
 import ynov.smartorder.api.persistence.entities.OrderEty;
 import ynov.smartorder.api.persistence.entities.UserEty;
+import ynov.smartorder.api.persistence.mappers.BigDecimalEtyMapper;
 import ynov.smartorder.api.persistence.mappers.MealEtyMapper;
 import ynov.smartorder.api.persistence.mappers.OrderEtyMapper;
 import ynov.smartorder.api.web.dtos.MealDto;
@@ -31,9 +32,9 @@ public class OrderRepository implements OrderPort {
     private final OrderRepositoryJPA orderRepositoryJPA;
     private final UserRepositoryJPA userRepositoryJPA;
     private final OrderEtyMapper orderEtyMapper;
-    @Autowired
     private final MealRepositoryJPA mealRepositoryJPA;
     private final MealEtyMapper mealEtyMapper;
+    private final BigDecimalEtyMapper bigDecimalEtyMapper;
 
 
 
@@ -84,24 +85,76 @@ public class OrderRepository implements OrderPort {
                 .collect(Collectors.toList());
     }
 
-
-
-
-    @Override
-    public List<Order> getAllCurrentOrders() {
-        return orderRepositoryJPA.findAll()
-                .stream()
-                .filter((ety) -> !ety.getValidated())
-                .map(orderEtyMapper::toModel)
-                .collect(Collectors.toList());
-    }
-
     @Override
     public List<Order> getAllOrder() {
         return orderRepositoryJPA.findAll()
                 .stream()
                 .map(orderEtyMapper::toModel)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void validateOrder(UUID id) {
+        orderRepositoryJPA.findById(id)
+                .ifPresent(orderEty -> {
+                    orderEty.setValidated(true);
+                    orderRepositoryJPA.save(orderEty);
+                });
+    }
+
+    @Override
+    public List<Meal> getTopMeals(LocalDateTime start, LocalDateTime end) {
+        return orderRepositoryJPA.findAll()
+                .stream()
+                .filter(orderEty -> orderEty.getDate().isAfter(start) && orderEty.getDate().isBefore(end))
+                .flatMap(orderEty -> orderEty.getMeals().stream())
+                .collect(Collectors.groupingBy(MealEty::getTitle, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(5)
+                .map(entry -> mealRepositoryJPA.findByTitle(entry.getKey())
+                        .map(mealEtyMapper::toModel)
+                        .orElse(null))
+                .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public int getTotalOrders(LocalDateTime start, LocalDateTime end) {
+        return (int) orderRepositoryJPA.findAll()
+                .stream()
+                .filter(orderEty -> orderEty.getDate().isAfter(start) && orderEty.getDate().isBefore(end))
+                .count();
+    }
+
+    @Override
+    public double getTotalRevenue(LocalDateTime start, LocalDateTime end) {
+        return orderRepositoryJPA.findAll()
+                .stream()
+                .filter(orderEty -> orderEty.getDate().isAfter(start) && orderEty.getDate().isBefore(end))
+                .flatMap(orderEty -> orderEty.getMeals().stream())
+                .mapToDouble(mealEty -> bigDecimalEtyMapper.fromBigDecimal(mealEty.getPrice()))
+                .sum();
+    }
+
+    @Override
+    public double getAverageCart(LocalDateTime start, LocalDateTime end) {
+        List<OrderEty> orders = orderRepositoryJPA.findAll()
+                .stream()
+                .filter(orderEty -> orderEty.getDate().isAfter(start) && orderEty.getDate().isBefore(end))
+                .collect(Collectors.toList());
+
+        if (orders.isEmpty()) {
+            return 0.0;
+        }
+
+        double totalRevenue = orders.stream()
+                .flatMap(orderEty -> orderEty.getMeals().stream())
+                .mapToDouble(mealEty -> bigDecimalEtyMapper.fromBigDecimal(mealEty.getPrice()))
+                .sum();
+
+        return totalRevenue / orders.size();
     }
 
 

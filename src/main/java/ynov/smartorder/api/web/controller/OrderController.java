@@ -56,4 +56,10 @@ public class OrderController implements OrdersApi {
                         .map(orderEtyMapper::toDto)
                         .collect(Collectors.toList()));
     }
+
+    @Override
+    public ResponseEntity<Void> validateOrder(UUID id) {
+        orderRepository.validateOrder(id);
+        return ResponseEntity.ok().build();
+    }
 }
