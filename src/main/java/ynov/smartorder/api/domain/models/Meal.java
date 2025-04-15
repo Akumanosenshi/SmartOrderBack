@@ -17,7 +17,6 @@ public class Meal {
     private String title;
     private String category;
     private String description;
-    private String image;
     private String emoji;
     private BigDecimal price;
 

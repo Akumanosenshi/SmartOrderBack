@@ -20,7 +20,6 @@ public class MealTest implements WithRandom {
         String title = randomString();
         String category = randomString();
         String description = randomString();
-        String image = randomString();
         String emoji = randomString();
         BigDecimal price = randomBigDecimal();
         //when
@@ -28,7 +27,6 @@ public class MealTest implements WithRandom {
         meal.setTitle(title);
         meal.setCategory(category);
         meal.setDescription(description);
-        meal.setImage(image);
         meal.setEmoji(emoji);
         meal.setPrice(price);
         //then
@@ -37,7 +35,6 @@ public class MealTest implements WithRandom {
         assertThat(meal.getTitle()).isEqualTo(title);
         assertThat(meal.getCategory()).isEqualTo(category);
         assertThat(meal.getDescription()).isEqualTo(description);
-        assertThat(meal.getImage()).isEqualTo(image);
         assertThat(meal.getEmoji()).isEqualTo(emoji);
         assertThat(meal.getPrice()).isEqualTo(price);
 

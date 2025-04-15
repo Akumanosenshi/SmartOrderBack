@@ -26,9 +26,6 @@ public class MealEty {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "IMAGE", columnDefinition = "TEXT")
-    private String image;
-
     @Column(name = "EMOJI")
     private String emoji;
 
