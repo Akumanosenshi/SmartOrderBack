@@ -1,6 +1,4 @@
-//package fedet.epicerie.api.web.config;
-//
-//import fedet.epicerie.api.web.filters.JwtAuthenticationFilter;
+
 //import lombok.RequiredArgsConstructor;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
@@ -25,7 +23,7 @@
 //                .and()
 //                .authorizeHttpRequests()
 //                .antMatchers("/auth/**").permitAll()
-//                .antMatchers("/student/**").hasAnyRole("STUDENT", "ADMIN")
+//                .antMatchers("/user/**").hasAnyRole("RESTAURANT", "USER")
 //                .antMatchers("/management/**").hasRole("ADMIN")
 //                .antMatchers("/collect/**").hasRole("ADMIN")
 //                .anyRequest().authenticated()
