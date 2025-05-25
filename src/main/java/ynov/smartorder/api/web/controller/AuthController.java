@@ -11,12 +11,10 @@ import ynov.smartorder.api.domain.models.User;
 import ynov.smartorder.api.domain.ports.RestaurantPort;
 import ynov.smartorder.api.domain.ports.UserPort;
 import ynov.smartorder.api.web.apis.AuthApi;
-import ynov.smartorder.api.web.dtos.AuthLoginPostRequestDto;
-import ynov.smartorder.api.web.dtos.AuthResponseDto;
-import ynov.smartorder.api.web.dtos.RoleDto;
-import ynov.smartorder.api.web.dtos.UserDto;
+import ynov.smartorder.api.web.dtos.*;
 import ynov.smartorder.api.web.mappers.UserDtoMapper;
 import ynov.smartorder.api.web.services.JwtService;
+
 import java.util.UUID;
 
 @RestController
@@ -29,7 +27,6 @@ public class AuthController implements AuthApi {
     private final RestaurantPort restaurantPort;
     private final UserDtoMapper userDtoMapper;
     private final JwtService jwtService;
-
 
 
     @Override
@@ -46,12 +43,22 @@ public class AuthController implements AuthApi {
         Restaurant restaurant = restaurantPort.findRestaurant(authLoginPostRequestDto.getEmail());
         if (restaurant != null && restaurant.getMdp().equals(authLoginPostRequestDto.getMotDePasse())) {
             String token = jwtService.generateTokenWithRole(restaurant.getEmail(), "RESTAURANT");
-            return ResponseEntity.ok(new AuthResponseDto().token(token).role(RoleDto.RESTAURANT));
+            UserPublicDto userPublicDto = new UserPublicDto()
+                    .email(restaurant.getEmail())
+                    .firstname(restaurant.getFirstname())
+                    .lastname(restaurant.getLastname())
+                    .role(String.valueOf(RoleDto.RESTAURANT));
+            return ResponseEntity.ok(new AuthResponseDto().token(token).role(RoleDto.RESTAURANT).user(userPublicDto));
         }
         User user = userPort.findUser(authLoginPostRequestDto.getEmail());
         if (user != null && user.getMdp().equals(authLoginPostRequestDto.getMotDePasse())) {
             String token = jwtService.generateTokenWithRole(user.getEmail(), "USER");
-            return ResponseEntity.ok(new AuthResponseDto().token(token).role(RoleDto.USER));
+            UserPublicDto userPublicDto = new UserPublicDto()
+                    .email(user.getEmail())
+                    .firstname(user.getFirstname())
+                    .lastname(user.getLastname())
+                    .role(String.valueOf(RoleDto.USER));
+            return ResponseEntity.ok(new AuthResponseDto().token(token).role(RoleDto.USER).user(userPublicDto));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }

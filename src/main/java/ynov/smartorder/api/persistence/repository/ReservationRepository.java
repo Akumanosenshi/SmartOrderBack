@@ -41,26 +41,11 @@ public class ReservationRepository implements ReservationPort {
     }
 
     @Override
-    public void updateReservation(Reservation reservation) {
-        if (reservation.getId() == null) {
-            throw new IllegalArgumentException("❌ ID de réservation manquant pour la mise à jour.");
-        }
-
-        reservationRepositoryJPA.findById(reservation.getId())
-                .ifPresent(existing -> {
-                    // Mise à jour des champs simples
-                    existing.setDate(reservation.getDate());
-                    existing.setNbrPeople(reservation.getNbrPeople());
-                    existing.setValidated(reservation.getValidated());
-
-                    // Mise à jour de l'utilisateur (si présent)
-                    if (reservation.getUser() != null && reservation.getUser().getEmail() != null) {
-                        userRepositoryJPA.findByEmail(reservation.getUser().getEmail())
-                                .ifPresent(existing::setUser);
-                    }
-
-                    reservationRepositoryJPA.save(existing);
-                });
+    public void updateReservation(UUID id) {
+        reservationRepositoryJPA.findById(id).ifPresent(reservationEty -> {
+            reservationEty.setValidated(true);
+            reservationRepositoryJPA.save(reservationEty);
+        });
     }
 
 

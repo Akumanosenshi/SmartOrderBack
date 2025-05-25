@@ -12,7 +12,7 @@ public interface ReservationPort {
 
     void deleteReservation(UUID uuid);
 
-    void updateReservation(Reservation reservation);
+    void updateReservation(UUID id);
 
     List<Reservation> FindReservation(UUID Id);
 

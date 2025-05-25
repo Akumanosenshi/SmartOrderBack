@@ -79,7 +79,7 @@ public class OrderRepository implements OrderPort {
 
     @Override
     public List<Order> getCurrentOrders() {
-        return orderRepositoryJPA.findByValidated(true)
+        return orderRepositoryJPA.findByValidated(false)
                 .stream()
                 .map(orderEtyMapper::toModel)
                 .collect(Collectors.toList());

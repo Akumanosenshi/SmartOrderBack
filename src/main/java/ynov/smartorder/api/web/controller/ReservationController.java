@@ -46,8 +46,10 @@ public class ReservationController implements ReservationsApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateReservation(ReservationDto reservationDto) {
-        reservationRepository.updateReservation(reservationMapper.toEntity(reservationDto));
+    public ResponseEntity<Void> updateReservation(UUID id) {
+        reservationRepository.updateReservation(id);
         return ResponseEntity.ok().build();
     }
+
+
 }
