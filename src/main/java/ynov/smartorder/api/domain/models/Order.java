@@ -20,7 +20,7 @@ public class Order {
 
     private List<Meal> meals;
 
-    private Boolean validated;
+    private String state;
 
     private Double total;
 

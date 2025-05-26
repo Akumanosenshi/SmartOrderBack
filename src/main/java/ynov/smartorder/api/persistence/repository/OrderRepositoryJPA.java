@@ -17,7 +17,7 @@ import java.util.UUID;
 public interface OrderRepositoryJPA extends JpaRepository<OrderEty, UUID>{
     List<OrderEty> findByUserId(@NonNull UUID Id);
 
-    List<OrderEty> findByValidated(Boolean validated);
+    List<OrderEty> findByState(String state);
 
     List<OrderEty> findByDateBetween(LocalDateTime strart, LocalDateTime end);
 

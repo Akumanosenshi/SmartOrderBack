@@ -13,15 +13,17 @@ import java.util.UUID;
 public interface OrderPort {
     void saveOrder(Order order);
 
-    void deleteOrder(UUID id);
+
 
     List<Order> getOrders(UUID Id);
 
-    List<Order> getCurrentOrders();
-
     List<Order> getAllOrder();
 
-    void validateOrder(UUID id);
+    void toInProgress(UUID id);
+    void toReadyToPickUp(UUID id);
+    void toCompleted(UUID id);
+    void toCancel(UUID id);
+
 
     List<Meal> getTopMeals(LocalDateTime start, LocalDateTime end);
 

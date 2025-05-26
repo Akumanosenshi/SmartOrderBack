@@ -40,33 +40,22 @@ public class OrderRepository implements OrderPort {
 
     @Override
     public void saveOrder(Order order) {
-        // 1. Récupère l'utilisateur managé
+
         UserEty user = userRepositoryJPA.findByEmail(order.getUser().getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
 
-        // 2. Mapper la commande (sans user ni meals)
+
         OrderEty orderEty = orderEtyMapper.toEty(order);
         orderEty.setUser(user);
 
-        // 3. 🧠 Pour chaque plat, chercher le MealEty déjà en DB (par titre, id ou autre)
         List<MealEty> meals = order.getMeals().stream()
                 .map(meal -> mealRepositoryJPA.findByTitle(meal.getTitle()) // ou .findById(...)
                         .orElseThrow(() -> new IllegalArgumentException("Plat non trouvé : " + meal.getTitle())))
                 .collect(Collectors.toList());
 
-        // 4. Injection des plats existants
         orderEty.setMeals(meals);
 
-        // 5. Save !
         orderRepositoryJPA.save(orderEty);
-    }
-
-
-
-    @Override
-    public void deleteOrder(UUID id) {
-        orderRepositoryJPA.findById(id)
-                .ifPresent(orderRepositoryJPA::delete);
     }
 
     @Override
@@ -77,13 +66,7 @@ public class OrderRepository implements OrderPort {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<Order> getCurrentOrders() {
-        return orderRepositoryJPA.findByValidated(false)
-                .stream()
-                .map(orderEtyMapper::toModel)
-                .collect(Collectors.toList());
-    }
+
 
     @Override
     public List<Order> getAllOrder() {
@@ -94,13 +77,43 @@ public class OrderRepository implements OrderPort {
     }
 
     @Override
-    public void validateOrder(UUID id) {
+    public void toInProgress(UUID id) {
         orderRepositoryJPA.findById(id)
                 .ifPresent(orderEty -> {
-                    orderEty.setValidated(true);
+                    orderEty.setState("IN_PROGRESS");
                     orderRepositoryJPA.save(orderEty);
                 });
     }
+
+    @Override
+    public void toReadyToPickUp(UUID id) {
+        orderRepositoryJPA.findById(id)
+                .ifPresent(orderEty -> {
+                    orderEty.setState("READY_FOR_PICKUP");
+                    orderRepositoryJPA.save(orderEty);
+                });
+    }
+
+    @Override
+    public void toCompleted(UUID id) {
+        orderRepositoryJPA.findById(id)
+                .ifPresent(orderEty -> {
+                    orderEty.setState("COMPLETED");
+                    orderRepositoryJPA.save(orderEty);
+                });
+    }
+
+    @Override
+    public void toCancel(UUID id) {
+        orderRepositoryJPA.findById(id)
+                .ifPresent(orderEty -> {
+                    orderEty.setState("CANCELLED");
+                    orderRepositoryJPA.save(orderEty);
+                });
+
+    }
+
+
 
     @Override
     public List<Meal> getTopMeals(LocalDateTime start, LocalDateTime end) {

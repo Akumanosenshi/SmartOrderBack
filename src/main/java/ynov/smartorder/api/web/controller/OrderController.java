@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import ynov.smartorder.api.web.apis.OrdersApi;
 import ynov.smartorder.api.web.dtos.OrderDto;
+import ynov.smartorder.api.web.dtos.StateDto;
 import ynov.smartorder.api.web.mappers.OrderDtoMapper;
 
 @RequiredArgsConstructor
@@ -20,12 +21,6 @@ public class OrderController implements OrdersApi {
     private final OrderDtoMapper orderEtyMapper;
 
     @Override
-    public ResponseEntity<Void> deleteOrder(UUID id) {
-        orderRepository.deleteOrder(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @Override
     public ResponseEntity<List<OrderDto>> orderAllGet() {
         return orderRepository.getAllOrder().isEmpty() ? ResponseEntity.noContent().build() :
                 ResponseEntity.ok(orderRepository.getAllOrder().stream()
@@ -34,16 +29,10 @@ public class OrderController implements OrdersApi {
 
     }
 
-    @Override
-    public ResponseEntity<List<OrderDto>> orderCurrentGet() {
-        return orderRepository.getCurrentOrders().isEmpty() ? ResponseEntity.noContent().build() :
-                ResponseEntity.ok(orderRepository.getCurrentOrders().stream()
-                        .map(orderEtyMapper::toDto)
-                        .collect(Collectors.toList()));
-    }
 
     @Override
     public ResponseEntity<Void> orderPost(OrderDto orderDto) {
+        orderDto.setState(StateDto.valueOf("PENDING"));
         orderRepository.saveOrder(orderEtyMapper.toEntity(orderDto));
         return ResponseEntity.ok().build();
 
@@ -58,8 +47,28 @@ public class OrderController implements OrdersApi {
     }
 
     @Override
-    public ResponseEntity<Void> validateOrder(UUID id) {
-        orderRepository.validateOrder(id);
+    public ResponseEntity<Void> toCancel(UUID id) {
+        orderRepository.toCancel(id);
         return ResponseEntity.ok().build();
     }
+
+    @Override
+    public ResponseEntity<Void> toCompleted(UUID id) {
+        orderRepository.toCompleted(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> toInProgress(UUID id) {
+        orderRepository.toInProgress(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> toReadyToPickUp(UUID id) {
+        orderRepository.toReadyToPickUp(id);
+        return ResponseEntity.ok().build();
+    }
+
+
 }

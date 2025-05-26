@@ -273,39 +273,6 @@ paths:
       responses:
         '200':
           description: Commande passée avec succès
-    delete:
-      summary: Supprimer une commande
-      tags: [Orders]
-      operationId: deleteOrder
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Commande supprimée avec succès
-        '404':
-          description: Commande non trouvée
-
-  /Order/current:
-    get:
-      summary: Retrouver les commandes en cours
-      tags: [Orders]
-      responses:
-        '200':
-          description: Commande trouvée
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Order'
-        '404':
-          description: Commande non trouvée
-
   /Order/all:
     get:
       summary: Liste des commandes
@@ -342,11 +309,11 @@ paths:
                   $ref: '#/components/schemas/Order'
         '404':
           description: Commande non trouvée
-  /Order/validate:
+  /Order/toInProgress:
     put:
-      summary: Valider une commande
+      summary: Passe la commande de pending a InProgress
       tags: [Orders]
-      operationId: validateOrder
+      operationId: toInProgress
       parameters:
         - name: id
           in: query
@@ -356,10 +323,60 @@ paths:
             format: uuid
       responses:
         '200':
-          description: Commande validée avec succès
+          description: Commande in progress avec succès
         '404':
           description: Commande non trouvée
-
+  /Order/toReadyToPickUp:
+    put:
+      summary: Passe la commande de InProgress a toReadyToPickUp
+      tags: [Orders]
+      operationId: toReadyToPickUp
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Commande ready avec succès
+        '404':
+          description: Commande non trouvée
+  /Order/toCompleted:
+    put:
+      summary: Passe la commande de toReadyToPickUp a Completed
+      tags: [Orders]
+      operationId: toCompleted
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Commande completed avec succès
+        '404':
+          description: Commande non trouvée
+  /Order/toCancel:
+    put:
+      summary: Passe la commande a cancelled
+      tags: [ Orders ]
+      operationId: toCancel
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Commande cancel avec succès
+        '404':
+          description: Commande non trouvée
   /statistics:
     get:
       summary: Récupérer les statistiques du restaurant sur une période
@@ -460,7 +477,6 @@ components:
           $ref: '#/components/schemas/UserPublic'
         validated:
           type: boolean
-
     Order:
       type: object
       properties:
@@ -479,8 +495,16 @@ components:
         total:
           type: number
           format: double
-        validated:
-            type: boolean
+        state:
+          $ref: '#/components/schemas/State'
+    State:
+      type: string
+      enum:
+        - PENDING
+        - IN_PROGRESS
+        - READY_FOR_PICKUP
+        - COMPLETED
+        - CANCELLED
     Statistics:
       type: object
       properties:

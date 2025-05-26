@@ -34,8 +34,8 @@ public class OrderEty {
     )
     private List<MealEty> meals;
 
-    @Column(name = "VALIDATED")
-    private Boolean validated;
+    @Column(name = "STATE")
+    private String state;
 
     @Column(name = "TOTAL")
     private Double total;
