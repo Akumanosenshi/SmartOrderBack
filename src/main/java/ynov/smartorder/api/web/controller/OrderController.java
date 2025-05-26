@@ -47,26 +47,23 @@ public class OrderController implements OrdersApi {
     }
 
     @Override
-    public ResponseEntity<Void> toCancel(UUID id) {
-        orderRepository.toCancel(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @Override
-    public ResponseEntity<Void> toCompleted(UUID id) {
-        orderRepository.toCompleted(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @Override
-    public ResponseEntity<Void> toInProgress(UUID id) {
-        orderRepository.toInProgress(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @Override
-    public ResponseEntity<Void> toReadyToPickUp(UUID id) {
-        orderRepository.toReadyToPickUp(id);
+    public ResponseEntity<Void> changeOrderState(UUID id, StateDto state) {
+        switch (state) {
+            case IN_PROGRESS:
+                orderRepository.toInProgress(id);
+                break;
+            case READY_FOR_PICKUP:
+                orderRepository.toReadyToPickUp(id);
+                break;
+            case COMPLETED:
+                orderRepository.toCompleted(id);
+                break;
+            case CANCELLED:
+                orderRepository.toCancel(id);
+                break;
+            default:
+                return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok().build();
     }
 

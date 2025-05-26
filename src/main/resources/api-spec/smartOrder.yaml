@@ -309,11 +309,11 @@ paths:
                   $ref: '#/components/schemas/Order'
         '404':
           description: Commande non trouvée
-  /Order/toInProgress:
+  /Order/changeState:
     put:
-      summary: Passe la commande de pending a InProgress
+      summary: change la commande d'etat
       tags: [Orders]
-      operationId: toInProgress
+      operationId: changeOrderState
       parameters:
         - name: id
           in: query
@@ -321,60 +321,14 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: state
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/State'
       responses:
         '200':
           description: Commande in progress avec succès
-        '404':
-          description: Commande non trouvée
-  /Order/toReadyToPickUp:
-    put:
-      summary: Passe la commande de InProgress a toReadyToPickUp
-      tags: [Orders]
-      operationId: toReadyToPickUp
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Commande ready avec succès
-        '404':
-          description: Commande non trouvée
-  /Order/toCompleted:
-    put:
-      summary: Passe la commande de toReadyToPickUp a Completed
-      tags: [Orders]
-      operationId: toCompleted
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Commande completed avec succès
-        '404':
-          description: Commande non trouvée
-  /Order/toCancel:
-    put:
-      summary: Passe la commande a cancelled
-      tags: [ Orders ]
-      operationId: toCancel
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Commande cancel avec succès
         '404':
           description: Commande non trouvée
   /statistics:
