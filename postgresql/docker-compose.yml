@@ -1,9 +1,9 @@
 version: '3.8'
-
+name: smartorder-postgres
 services:
   postgres-db:
     image: postgres:15
-    container_name: postgres_container
+    container_name: postgres_container_smartorder
     environment:
       POSTGRES_DB: smartOrder
       POSTGRES_USER: root

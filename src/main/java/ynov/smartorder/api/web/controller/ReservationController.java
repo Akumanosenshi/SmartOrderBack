@@ -47,9 +47,10 @@ public class ReservationController implements ReservationsApi {
 
     @Override
     public ResponseEntity<Void> updateReservation(UUID id) {
-        reservationRepository.updateReservation(id);
-        return ResponseEntity.ok().build();
+        return null;
     }
+
+
 
 
 }

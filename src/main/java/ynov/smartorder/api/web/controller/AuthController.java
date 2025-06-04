@@ -44,6 +44,7 @@ public class AuthController implements AuthApi {
         if (restaurant != null && restaurant.getMdp().equals(authLoginPostRequestDto.getMotDePasse())) {
             String token = jwtService.generateTokenWithRole(restaurant.getEmail(), "RESTAURANT");
             UserPublicDto userPublicDto = new UserPublicDto()
+                    .id(restaurant.getId())
                     .email(restaurant.getEmail())
                     .firstname(restaurant.getFirstname())
                     .lastname(restaurant.getLastname())
@@ -54,6 +55,7 @@ public class AuthController implements AuthApi {
         if (user != null && user.getMdp().equals(authLoginPostRequestDto.getMotDePasse())) {
             String token = jwtService.generateTokenWithRole(user.getEmail(), "USER");
             UserPublicDto userPublicDto = new UserPublicDto()
+                    .id(user.getId())
                     .email(user.getEmail())
                     .firstname(user.getFirstname())
                     .lastname(user.getLastname())

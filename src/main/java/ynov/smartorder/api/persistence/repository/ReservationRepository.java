@@ -41,11 +41,13 @@ public class ReservationRepository implements ReservationPort {
     }
 
     @Override
-    public void updateReservation(UUID id) {
-        reservationRepositoryJPA.findById(id).ifPresent(reservationEty -> {
-            reservationEty.setValidated(true);
-            reservationRepositoryJPA.save(reservationEty);
-        });
+    public void updateReservation(Reservation reservation) {
+        Optional<ReservationEty> existingReservation = reservationRepositoryJPA.findById(reservation.getId());
+        if (existingReservation.isPresent()) {
+            ReservationEty updatedReservation = reservationEtyMapper.toEty(reservation);
+            updatedReservation.setUser(existingReservation.get().getUser());
+            reservationRepositoryJPA.save(updatedReservation);
+        }
     }
 
 

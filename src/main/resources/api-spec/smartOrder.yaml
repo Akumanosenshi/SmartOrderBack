@@ -239,7 +239,7 @@ paths:
 
   /reservations/user:
     get:
-      summary: Retrouver une réservation
+      summary: Retrouver une réservation par utilisateur 
       tags: [Reservations]
       parameters:
         - name: id
@@ -408,6 +408,9 @@ components:
     UserPublic:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
         firstname:
           type: string
         lastname:
