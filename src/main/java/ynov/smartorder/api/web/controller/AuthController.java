@@ -1,6 +1,7 @@
 package ynov.smartorder.api.web.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,6 +16,7 @@ import ynov.smartorder.api.web.dtos.*;
 import ynov.smartorder.api.web.mappers.UserDtoMapper;
 import ynov.smartorder.api.web.services.JwtService;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -31,18 +33,29 @@ public class AuthController implements AuthApi {
 
     @Override
     public ResponseEntity<AuthResponseDto> authRegisterPost(@RequestBody UserDto userDto) {
+        // Vérifier si l'utilisateur existe déjà
+        Optional<User> existingUser = userPort.findUserByEmail(userDto.getEmail());
+        if (existingUser.isPresent()) {
+            // 409 Conflict
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        // Créer et enregistrer l'utilisateur
         User user = userDtoMapper.toEntity(userDto);
+        user.setRole(String.valueOf(RoleDto.USER));
         userPort.saveUser(user);
-        String token = jwtService.generateTokenWithRole(user.getEmail(), "USER");
+
+        String token = jwtService.generateToken(user.getEmail(), "USER");
         AuthResponseDto response = new AuthResponseDto().token(token).role(RoleDto.USER);
         return ResponseEntity.ok(response);
     }
+
 
     @Override
     public ResponseEntity<AuthResponseDto> authLoginPost(@RequestBody AuthLoginPostRequestDto authLoginPostRequestDto) {
         Restaurant restaurant = restaurantPort.findRestaurant(authLoginPostRequestDto.getEmail());
         if (restaurant != null && restaurant.getMdp().equals(authLoginPostRequestDto.getMotDePasse())) {
-            String token = jwtService.generateTokenWithRole(restaurant.getEmail(), "RESTAURANT");
+            String token = jwtService.generateToken(restaurant.getEmail(), "RESTAURANT");
             UserPublicDto userPublicDto = new UserPublicDto()
                     .id(restaurant.getId())
                     .email(restaurant.getEmail())
@@ -51,9 +64,10 @@ public class AuthController implements AuthApi {
                     .role(String.valueOf(RoleDto.RESTAURANT));
             return ResponseEntity.ok(new AuthResponseDto().token(token).role(RoleDto.RESTAURANT).user(userPublicDto));
         }
-        User user = userPort.findUser(authLoginPostRequestDto.getEmail());
-        if (user != null && user.getMdp().equals(authLoginPostRequestDto.getMotDePasse())) {
-            String token = jwtService.generateTokenWithRole(user.getEmail(), "USER");
+        User user = userPort.findUser(authLoginPostRequestDto.getEmail(), authLoginPostRequestDto.getMotDePasse());
+
+        if (user != null) {
+            String token = jwtService.generateToken(user.getEmail(), "USER");
             UserPublicDto userPublicDto = new UserPublicDto()
                     .id(user.getId())
                     .email(user.getEmail())
@@ -65,9 +79,5 @@ public class AuthController implements AuthApi {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @Override
-    public ResponseEntity<Void> deleteUser(UUID email) {
-        userPort.deleteUser(email);
-        return ResponseEntity.ok().build();
-    }
+
 }
