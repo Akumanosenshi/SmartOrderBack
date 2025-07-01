@@ -21,14 +21,12 @@ public class ReservationEtyTest implements WithRandom {
         reservation.setId(id);
         reservation.setDate(date);
         reservation.setNbrPeople(nbrPeople);
-        reservation.setUser(user);
         reservation.setValidated(validated);
         //then
         assertThat(reservation).isNotNull();
         assertThat(reservation.getId()).isEqualTo(id);
         assertThat(reservation.getDate()).isEqualTo(date);
         assertThat(reservation.getNbrPeople()).isEqualTo(nbrPeople);
-        assertThat(reservation.getUser()).isEqualTo(user);
         assertThat(reservation.getValidated()).isEqualTo(validated);
 
     }

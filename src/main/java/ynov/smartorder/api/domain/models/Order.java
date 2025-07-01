@@ -16,7 +16,7 @@ public class Order {
 
     private LocalDateTime date;
 
-    private User user;
+    private UUID userId;
 
     private List<Meal> meals;
 

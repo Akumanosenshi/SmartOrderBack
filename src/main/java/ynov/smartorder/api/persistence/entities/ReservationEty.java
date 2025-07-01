@@ -23,9 +23,8 @@ public class ReservationEty {
     @Column(name = "NBR_PEOPLE")
     private Integer nbrPeople;
 
-    @ManyToOne
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private UserEty user;
+    @Column(name = "USER_ID")
+    private UUID userId;
 
     @Column(name = "VALIDATED")
     private Boolean validated;

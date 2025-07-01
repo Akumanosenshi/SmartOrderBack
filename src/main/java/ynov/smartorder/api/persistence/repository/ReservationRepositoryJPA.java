@@ -8,7 +8,8 @@ import java.util.UUID;
 
 public interface ReservationRepositoryJPA extends JpaRepository<ReservationEty, UUID> {
 
-    List<ReservationEty> findByUser_Id(UUID Id);
+    List<ReservationEty> findByUserId(UUID userId);
+
 
 
 }

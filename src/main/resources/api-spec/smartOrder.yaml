@@ -15,6 +15,7 @@ paths:
   /Meal:
     get:
       summary: Retrouver un plat
+      description: Accessible aux rôles **USER** et **RESTAURANT**
       tags: [Meals]
       security:
         - bearerAuth: []
@@ -35,6 +36,7 @@ paths:
           description: Plat non trouvé
     post:
       summary: Publier un nouveau plat
+      description: Accessible uniquement au rôle **RESTAURANT**
       tags: [Meals]
       security:
         - bearerAuth: []
@@ -54,6 +56,7 @@ paths:
           description: Plat déjà existant
     put:
       summary: Mettre à jour un plat (ne modifie par le titre)
+      description: Accessible uniquement au rôle **RESTAURANT**
       tags: [Meals]
       security:
         - bearerAuth: []
@@ -71,6 +74,7 @@ paths:
           description: Plat non trouvé
     delete:
       summary: Supprimer un plat
+      description: Accessible uniquement au rôle **RESTAURANT**
       tags: [Meals]
       security:
         - bearerAuth: []
@@ -90,6 +94,7 @@ paths:
   /Meal/categories:
     get:
       summary: Liste des catégories de plats
+      description: Accessible aux rôles **USER** et **RESTAURANT**
       tags: [Meals]
       security:
         - bearerAuth: []
@@ -106,6 +111,7 @@ paths:
   /Meal/all:
     get:
       summary: Liste tous les plats
+      description: Accessible aux rôles **USER** et **RESTAURANT**
       tags: [Meals]
       security:
         - bearerAuth: []
@@ -129,6 +135,7 @@ paths:
   /auth/register:
     post:
       summary: Inscription d’un nouvel utilisateur
+      description: Accessible sans authentification
       tags: [Auth]
       requestBody:
         required: true
@@ -147,10 +154,13 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '400':
           $ref: '#/components/responses/BadRequestError'
+        '409':
+          description: Email déjà utilisé
 
   /auth/login:
     post:
       summary: Connexion d’un utilisateur (JWT)
+      description: Accessible sans authentification
       tags: [Auth]
       requestBody:
         required: true
@@ -174,10 +184,14 @@ paths:
           $ref: '#/components/responses/BadRequestError'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          description: Trop de tentatives de connexion. L'utilisateur est temporairement bloqué.
+
 
   /statistics:
     get:
       summary: Récupérer les statistiques du restaurant sur une période
+      description: Accessible uniquement au rôle **RESTAURANT**
       tags: [Statistics]
       security:
         - bearerAuth: []
@@ -213,9 +227,10 @@ paths:
   /reservations:
     post:
       summary: Créer une réservation
-      tags: [Reservations]
+      description: Accessible aux rôles **USER** et **RESTAURANT**
+      tags: [ Reservations ]
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -227,26 +242,9 @@ paths:
           description: Réservation créée avec succès
         '409':
           $ref: '#/components/responses/BadRequestError'
-    put:
-      summary: Mettre à jour une réservation
-      tags: [Reservations]
-      security:
-        - bearerAuth: []
-      operationId: updateReservation
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Réservation mise à jour avec succès
-        '404':
-          $ref: '#/components/responses/NotFoundError'
     delete:
       summary: Supprimer une réservation
+      description: Accessible uniquement au rôle **RESTAURANT**
       tags: [Reservations]
       security:
         - bearerAuth: []
@@ -267,6 +265,7 @@ paths:
   /reservations/all:
     get:
       summary: Liste des réservations
+      description: Accessible uniquement au rôle **RESTAURANT**
       tags: [Reservations]
       security:
         - bearerAuth: []
@@ -283,6 +282,7 @@ paths:
   /reservations/user:
     get:
       summary: Retrouver une réservation par utilisateur
+      description: Accessible aux rôles **USER** et **RESTAURANT**
       tags: [Reservations]
       security:
         - bearerAuth: []
@@ -308,6 +308,7 @@ paths:
   /Order:
     post:
       summary: Passer une commande
+      description: Accessible aux rôles **USER** et **RESTAURANT**
       tags: [Orders]
       security:
         - bearerAuth: []
@@ -324,6 +325,7 @@ paths:
   /Order/all:
     get:
       summary: Liste des commandes
+      description: Accessible uniquement au rôle **RESTAURANT**
       tags: [Orders]
       security:
         - bearerAuth: []
@@ -340,6 +342,7 @@ paths:
   /Order/user:
     get:
       summary: Retrouver des commandes par utilisateur
+      description: Accessible aux rôles **USER** et **RESTAURANT**
       tags: [Orders]
       security:
         - bearerAuth: []
@@ -365,6 +368,7 @@ paths:
   /Order/changeState:
     put:
       summary: Changer l’état d’une commande
+      description: Accessible uniquement au rôle **RESTAURANT**
       tags: [Orders]
       security:
         - bearerAuth: []
@@ -419,6 +423,7 @@ components:
           type: string
         email:
           type: string
+          format: email
         mdp:
           type: string
 
@@ -434,6 +439,7 @@ components:
           type: string
         email:
           type: string
+          format: email
         role:
           type: string
 
@@ -448,10 +454,9 @@ components:
           format: date-time
         nbrPeople:
           type: integer
-        user:
-          $ref: '#/components/schemas/UserPublic'
-        validated:
-          type: boolean
+        userId:
+          type: string
+          format: uuid
 
     Order:
       type: object
@@ -459,8 +464,9 @@ components:
         id:
           type: string
           format: uuid
-        user:
-          $ref: '#/components/schemas/UserPublic'
+        userId:
+            type: string
+            format: uuid
         meals:
           type: array
           items:

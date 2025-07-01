@@ -4,11 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ynov.smartorder.api.web.apis.ReservationsApi;
-import ynov.smartorder.api.domain.ports.ReservationPort;
-import ynov.smartorder.api.persistence.repository.MealRepository;
 import ynov.smartorder.api.persistence.repository.ReservationRepository;
 import ynov.smartorder.api.web.dtos.ReservationDto;
-import ynov.smartorder.api.web.mappers.MealDtoMapper;
 import ynov.smartorder.api.web.mappers.ReservationDtoMapper;
 
 import java.util.List;
@@ -43,11 +40,6 @@ public class ReservationController implements ReservationsApi {
     public ResponseEntity<List<ReservationDto>> reservationsUserGet(UUID id) {
         reservationRepository.FindReservation(id);
         return ResponseEntity.ok(reservationRepository.FindReservation(id).stream().map(reservationMapper::toDto).collect(Collectors.toList()));
-    }
-
-    @Override
-    public ResponseEntity<Void> updateReservation(UUID id) {
-        return null;
     }
 
 

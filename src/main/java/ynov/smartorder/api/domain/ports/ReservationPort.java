@@ -12,8 +12,6 @@ public interface ReservationPort {
 
     void deleteReservation(UUID uuid);
 
-    void updateReservation(Reservation reservation);
-
     List<Reservation> FindReservation(UUID Id);
 
     List<Reservation> FindAllReservation();

@@ -12,7 +12,7 @@ public class Reservation {
     private UUID id;
     private LocalDateTime date;
     private Integer nbrPeople;
-    private User user;
+    private UUID userId;
     private Boolean validated;
 
 }

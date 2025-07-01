@@ -22,9 +22,8 @@ public class OrderEty {
     @Column(name = "DATE")
     private LocalDateTime date;
 
-    @ManyToOne
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private UserEty user;
+    @Column(name = "USER_ID")
+    private UUID userId;
 
     @ManyToMany
     @JoinTable(

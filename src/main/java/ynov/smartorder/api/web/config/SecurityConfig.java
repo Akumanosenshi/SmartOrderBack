@@ -3,6 +3,7 @@ package ynov.smartorder.api.web.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,14 +24,37 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/auth/register", "/auth/login").permitAll() // public
-                .anyRequest().authenticated()                             // tout le reste → JWT
+
+                // 🔓 Accès public sans authentification
+                .antMatchers("/auth/**").permitAll()
+
+                // 🟢 Accessible à USER et RESTAURANT
+                .antMatchers(HttpMethod.GET, "/Meal", "/Meal/categories", "/Meal/all").hasAnyRole("USER", "RESTAURANT")
+                .antMatchers(HttpMethod.POST, "/reservations").hasAnyRole("USER", "RESTAURANT")
+                .antMatchers(HttpMethod.GET, "/reservations/user").hasAnyRole("USER", "RESTAURANT")
+                .antMatchers(HttpMethod.POST, "/Order").hasAnyRole("USER", "RESTAURANT")
+                .antMatchers(HttpMethod.GET, "/Order/user").hasAnyRole("USER", "RESTAURANT")
+
+                // 🔐 RESTAURANT uniquement
+                .antMatchers(HttpMethod.POST, "/Meal").hasRole("RESTAURANT")
+                .antMatchers(HttpMethod.PUT, "/Meal").hasRole("RESTAURANT")
+                .antMatchers(HttpMethod.DELETE, "/Meal").hasRole("RESTAURANT")
+                .antMatchers(HttpMethod.GET, "/statistics").hasRole("RESTAURANT")
+                .antMatchers(HttpMethod.DELETE, "/reservations").hasRole("RESTAURANT")
+                .antMatchers(HttpMethod.GET, "/reservations/all").hasRole("RESTAURANT")
+                .antMatchers(HttpMethod.GET, "/Order/all").hasRole("RESTAURANT")
+                .antMatchers(HttpMethod.PUT, "/Order/changeState").hasRole("RESTAURANT")
+
+                // Tout le reste nécessite juste d’être connecté
+                .anyRequest().authenticated()
+
                 .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

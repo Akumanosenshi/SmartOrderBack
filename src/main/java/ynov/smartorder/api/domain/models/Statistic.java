@@ -1,14 +1,14 @@
 package ynov.smartorder.api.domain.models;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Builder
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Statistic {
 
     private List<Meal> topMeals;

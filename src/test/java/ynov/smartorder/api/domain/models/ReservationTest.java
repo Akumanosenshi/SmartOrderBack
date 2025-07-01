@@ -1,34 +1,41 @@
 package ynov.smartorder.api.domain.models;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ynov.smartorder.api.common.utils.WithRandom;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
-public class ReservationTest implements WithRandom {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Test
-void testGetterSetter() {
-    //given
-    Reservation reservation = new Reservation();
-    UUID id = randomUUID();
-    LocalDateTime date = LocalDateTime.now();
-    Integer nbrPeople = randomInt();
-    User user = random(User.class);
-    Boolean validated = randomBoolean();
-    //when
-    reservation.setId(id);
-    reservation.setDate(date);
-    reservation.setNbrPeople(nbrPeople);
-    reservation.setUser(user);
-    reservation.setValidated(validated);
-    //then
-    assertThat(reservation).isNotNull();
-    assertThat(reservation.getId()).isEqualTo(id);
-    assertThat(reservation.getDate()).isEqualTo(date);
-    assertThat(reservation.getNbrPeople()).isEqualTo(nbrPeople);
-    assertThat(reservation.getUser()).isEqualTo(user);
-    assertThat(reservation.getValidated()).isEqualTo(validated);
+@ExtendWith(MockitoExtension.class)
+class ReservationTest implements WithRandom {
+
+    @Test
+    void shouldCreateReservationWithCorrectValues() {
+        // given
+        UUID id = randomUUID();
+        LocalDateTime date = LocalDateTime.now();
+        Integer nbrPeople = randomInt();
+        UUID userId = randomUUID();
+        Boolean validated = randomBoolean();
+
+        // when
+        Reservation reservation = new Reservation();
+        reservation.setId(id);
+        reservation.setDate(date);
+        reservation.setNbrPeople(nbrPeople);
+        reservation.setUserId(userId);
+        reservation.setValidated(validated);
+
+        // then
+        assertEquals(id, reservation.getId());
+        assertEquals(date, reservation.getDate());
+        assertEquals(nbrPeople, reservation.getNbrPeople());
+        assertEquals(userId, reservation.getUserId());
+        assertEquals(validated, reservation.getValidated());
+    }
 }
-}
+

@@ -41,12 +41,11 @@ public class OrderRepository implements OrderPort {
     @Override
     public void saveOrder(Order order) {
 
-        UserEty user = userRepositoryJPA.findByEmail(order.getUser().getEmail())
+        UserEty user = userRepositoryJPA.findById(order.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
 
 
         OrderEty orderEty = orderEtyMapper.toEty(order);
-        orderEty.setUser(user);
 
         List<MealEty> meals = order.getMeals().stream()
                 .map(meal -> mealRepositoryJPA.findByTitle(meal.getTitle()) // ou .findById(...)
