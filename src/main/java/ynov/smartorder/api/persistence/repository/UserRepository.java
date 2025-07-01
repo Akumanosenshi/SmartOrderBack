@@ -20,8 +20,7 @@ public class UserRepository implements UserPort {
 
     private final UserRepositoryJPA userRepositoryJPA;
     private final UserEtyMapper userEtyMapper;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void saveUser(User user) {
