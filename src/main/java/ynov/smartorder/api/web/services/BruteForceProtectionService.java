@@ -20,7 +20,7 @@ public class BruteForceProtectionService {
     private static final long BLOCK_DURATION_MINUTES = 15;
 
     private final Map<String, Integer> attemptsCache = new ConcurrentHashMap<>();
-    private final Map<String, Instant> blockCache = new ConcurrentHashMap<>();
+    final Map<String, Instant> blockCache = new ConcurrentHashMap<>();
 
     public boolean isBlocked(String email) {
         if (!blockCache.containsKey(email)) {
