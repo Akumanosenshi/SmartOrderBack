@@ -74,4 +74,12 @@ public class ReservationRepository implements ReservationPort {
         return totalPeople / reservations.size();
     }
 
+    @Override
+    public void validateReservation(UUID uuid) {
+        reservationRepositoryJPA.findById(uuid).ifPresent(reservationEty -> {
+            reservationEty.setValidated(true);
+            reservationRepositoryJPA.save(reservationEty);
+        });
+    }
+
 }

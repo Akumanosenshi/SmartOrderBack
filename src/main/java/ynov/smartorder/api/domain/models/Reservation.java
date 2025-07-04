@@ -14,5 +14,7 @@ public class Reservation {
     private Integer nbrPeople;
     private UUID userId;
     private Boolean validated;
+    private String userFirstname;
+    private String userLastname;
 
 }

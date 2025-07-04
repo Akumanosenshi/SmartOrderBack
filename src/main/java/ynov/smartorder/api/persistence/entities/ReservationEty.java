@@ -26,6 +26,12 @@ public class ReservationEty {
     @Column(name = "USER_ID")
     private UUID userId;
 
+    @Column(name = "USER_FIRSTNAME")
+    private String userFirstname;
+
+    @Column(name = "USER_LASTNAME")
+    private String userLastname;
+
     @Column(name = "VALIDATED")
     private Boolean validated;
 

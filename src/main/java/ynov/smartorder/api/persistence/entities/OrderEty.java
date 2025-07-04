@@ -25,6 +25,12 @@ public class OrderEty {
     @Column(name = "USER_ID")
     private UUID userId;
 
+    @Column(name = "USER_FIRSTNAME")
+    private String userFirstname;
+
+    @Column(name = "USER_LASTNAME")
+    private String userLastname;
+
     @ManyToMany
     @JoinTable(
             name = "t_orders_meals",

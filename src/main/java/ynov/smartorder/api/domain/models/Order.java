@@ -18,6 +18,9 @@ public class Order {
 
     private UUID userId;
 
+    private String userFirstname;
+    private String userLastname;
+
     private List<Meal> meals;
 
     private String state;

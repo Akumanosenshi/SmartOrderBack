@@ -42,7 +42,11 @@ public class ReservationController implements ReservationsApi {
         return ResponseEntity.ok(reservationRepository.FindReservation(id).stream().map(reservationMapper::toDto).collect(Collectors.toList()));
     }
 
-
+    @Override
+    public ResponseEntity<Void> updateReservation(UUID id) {
+        reservationRepository.validateReservation(id);
+        return ResponseEntity.ok().build();
+    }
 
 
 }

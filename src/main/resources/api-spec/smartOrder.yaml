@@ -261,7 +261,25 @@ paths:
           description: Réservation supprimée avec succès
         '404':
           $ref: '#/components/responses/NotFoundError'
-
+    put:
+        summary: Valider une réservation
+        description: Accessible uniquement au rôle **RESTAURANT**
+        tags: [Reservations]
+        security:
+            - bearerAuth: []
+        operationId: updateReservation
+        parameters:
+          - name: id
+            in: query
+            required: true
+            schema:
+              type: string
+              format: uuid
+        responses:
+            '200':
+              description: Réservation validé avec succès
+            '404':
+              $ref: '#/components/responses/NotFoundError'
   /reservations/all:
     get:
       summary: Liste des réservations
@@ -457,7 +475,12 @@ components:
         userId:
           type: string
           format: uuid
-
+        userFirstname:
+            type: string
+        userLastname:
+            type: string
+        validated:
+          type: boolean
     Order:
       type: object
       properties:
@@ -465,8 +488,12 @@ components:
           type: string
           format: uuid
         userId:
-            type: string
-            format: uuid
+          type: string
+          format: uuid
+        userFirstname:
+          type: string
+        userLastname:
+          type: string
         meals:
           type: array
           items:
@@ -479,7 +506,6 @@ components:
           format: double
         state:
           $ref: '#/components/schemas/State'
-
     State:
       type: string
       enum:

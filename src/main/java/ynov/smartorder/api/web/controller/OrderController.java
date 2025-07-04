@@ -26,7 +26,6 @@ public class OrderController implements OrdersApi {
                 ResponseEntity.ok(orderRepository.getAllOrder().stream()
                         .map(orderEtyMapper::toDto)
                         .collect(Collectors.toList()));
-
     }
 
 

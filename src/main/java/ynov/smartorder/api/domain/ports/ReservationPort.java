@@ -20,4 +20,6 @@ public interface ReservationPort {
 
     int getAveragePeoplePerReservation(LocalDateTime start, LocalDateTime end);
 
+    void validateReservation(UUID uuid);
+
 }
