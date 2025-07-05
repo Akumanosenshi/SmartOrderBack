@@ -11,6 +11,7 @@ import ynov.smartorder.api.domain.ports.UserPort;
 import ynov.smartorder.api.web.apis.AuthApi;
 import ynov.smartorder.api.web.dtos.*;
 import ynov.smartorder.api.web.mappers.UserDtoMapper;
+import ynov.smartorder.api.web.mappers.UserPublicDtoMapper;
 import ynov.smartorder.api.web.services.BruteForceProtectionService;
 import ynov.smartorder.api.web.services.JwtService;
 
@@ -26,6 +27,7 @@ public class AuthController implements AuthApi {
     private final UserDtoMapper userDtoMapper;
     private final JwtService jwtService;
     private final BruteForceProtectionService bruteForceProtectionService;
+    private final UserPublicDtoMapper userPublicDtoMapper;
 
 
     @Override
@@ -33,36 +35,53 @@ public class AuthController implements AuthApi {
         // Vérifier si l'utilisateur existe déjà
         Optional<User> existingUser = userPort.findUserByEmail(userDto.getEmail());
         if (existingUser.isPresent()) {
-            // 409 Conflict
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409
         }
 
-        // Créer et enregistrer l'utilisateur
+        // Mapper l'utilisateur et forcer le rôle USER
         User user = userDtoMapper.toEntity(userDto);
-            user.setRole(String.valueOf(RoleDto.USER)); //Overide the role to USER to avoid any issues
+        user.setRole(String.valueOf(RoleDto.USER));
+
+        // Enregistrement de l'utilisateur
         userPort.saveUser(user);
 
-        String token = jwtService.generateToken(user.getEmail(), "USER");
-        AuthResponseDto response = new AuthResponseDto().token(token).role(RoleDto.USER);
+        // Récupérer l'utilisateur sauvegardé depuis la BDD
+        Optional<User> savedUserOpt = userPort.findUserByEmail(user.getEmail());
+        if (savedUserOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        User savedUser = savedUserOpt.get();
+
+        // Génération du token
+        String token = jwtService.generateToken(savedUser.getEmail(), "USER");
+
+        // Création de la réponse
+        AuthResponseDto response = new AuthResponseDto()
+                .token(token)
+                .role(RoleDto.USER)
+                .user(userPublicDtoMapper.toPublicDto(savedUser));
+
         return ResponseEntity.ok(response);
     }
+
 
 
     @Override
     public ResponseEntity<AuthResponseDto> authLoginPost(@RequestBody AuthLoginPostRequestDto authLoginPostRequestDto) {
         String email = authLoginPostRequestDto.getEmail();
 
-        // 🔐 Vérifier si l'utilisateur est temporairement bloqué
+        //  Vérifier si l'utilisateur est temporairement bloqué
         if (bruteForceProtectionService.isBlocked(email)) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body(null); // ou un message : "Trop de tentatives, réessayez plus tard"
+                    .body(null);
         }
 
-        // 🔎 Vérification des identifiants
+        //  Vérification des identifiants
         User user = userPort.findUser(email, authLoginPostRequestDto.getMotDePasse());
 
         if (user != null) {
-            // ✅ Succès → Réinitialiser les tentatives
+            //  Succès → Réinitialiser les tentatives
             bruteForceProtectionService.resetAttempts(email);
 
             String role = user.getRole();
@@ -81,7 +100,7 @@ public class AuthController implements AuthApi {
                     .user(userPublicDto));
         }
 
-        // ❌ Échec → Incrémenter tentative
+        //  Échec → Incrémenter tentative
         bruteForceProtectionService.recordFailedAttempt(email);
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
