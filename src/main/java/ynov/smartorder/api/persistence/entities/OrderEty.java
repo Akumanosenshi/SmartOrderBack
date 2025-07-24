@@ -31,7 +31,7 @@ public class OrderEty {
     @Column(name = "USER_LASTNAME")
     private String userLastname;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "t_orders_meals",
             joinColumns = @JoinColumn(name = "order_ety_id"),

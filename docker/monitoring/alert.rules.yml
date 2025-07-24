@@ -1,0 +1,11 @@
+groups:
+  - name: smartorder-availability
+    rules:
+      - alert: ServiceDown
+        expr: probe_success{instance="http://app:8080/actuator/health", job="service_health"} == 0
+        for: 1s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Le service {{ $labels.instance }} est injoignable"
+          description: "Le service {{ $labels.instance }} ne répond plus depuis plus d'une minutes."

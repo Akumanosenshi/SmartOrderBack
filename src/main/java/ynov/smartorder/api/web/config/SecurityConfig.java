@@ -1,6 +1,7 @@
 package ynov.smartorder.api.web.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import ynov.smartorder.api.metrics.services.IpMetricsFilter;
 import ynov.smartorder.api.web.filters.JwtAuthenticationFilter;
 
 import java.util.List;
@@ -23,7 +25,8 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-
+    @Autowired
+    private IpMetricsFilter ipMetricsFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,10 +35,10 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
 
-                // 🔓 Accès public sans authentification
-                .antMatchers("/auth/**").permitAll()
+                // 🔓 Public
+                .antMatchers("/auth/**", "/actuator/**").permitAll()
 
-                // 🟢 Accessible à USER et RESTAURANT
+                // 🟢 USER & RESTAURANT
                 .antMatchers(HttpMethod.GET, "/Meal", "/Meal/categories", "/Meal/all").hasAnyRole("USER", "RESTAURANT")
                 .antMatchers(HttpMethod.POST, "/reservations").hasAnyRole("USER", "RESTAURANT")
                 .antMatchers(HttpMethod.GET, "/reservations/user").hasAnyRole("USER", "RESTAURANT")
@@ -52,11 +55,12 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/Order/all").hasRole("RESTAURANT")
                 .antMatchers(HttpMethod.PUT, "/Order/changeState").hasRole("RESTAURANT")
 
-                // Tout le reste nécessite juste d’être connecté
+                // 📌 Toute autre route nécessite un token
                 .anyRequest().authenticated()
 
                 .and()
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(ipMetricsFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }
@@ -67,17 +71,18 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of("http://localhost:8100")); // Frontend
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true); // autorise le cookie/token
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
 }

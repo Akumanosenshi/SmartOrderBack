@@ -1,0 +1,102 @@
+services:
+
+  # 1) Application Spring Boot
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    image: smartorder-back:latest
+    container_name: smartorder_app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/smartorder
+      SPRING_DATASOURCE_USERNAME: smartorder_user
+      SPRING_DATASOURCE_PASSWORD: V82g!dxgZ!tR9#qm
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: 'health,info,prometheus'
+      MANAGEMENT_ENDPOINTS_WEB_BASE_PATH: /actuator
+      MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: 'true'
+    ports:
+      - "8080:8080"
+    networks:
+      - smartorder-net
+
+  # 2) Prometheus
+  prometheus:
+    image: prom/prometheus:v2.46.0
+    container_name: smartorder_prometheus
+    volumes:
+      - ./docker/monitoring/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+      - ./docker/monitoring/alert.rules.yml:/etc/prometheus/alert.rules.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    ports:
+      - "9090:9090"
+    networks:
+      - smartorder-net
+
+  # 3) Grafana
+  grafana:
+    image: grafana/grafana:10.1.4
+    container_name: smartorder_grafana
+    depends_on:
+      - prometheus
+    volumes:
+      - ./docker/monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./docker/monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./docker/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "3000:3000"
+    networks:
+      - smartorder-net
+
+  # 4) Node Exporter (for host metrics)
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: smartorder_node_exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - smartorder-net
+
+  # 5) blackbox for external  service monitoring
+  blackbox_exporter:
+    image: prom/blackbox-exporter
+    container_name: smartorder_blackbox
+    ports:
+      - "9115:9115"
+    networks:
+      - smartorder-net
+
+    # 6) Alertmanager for alerting (python)
+  alertmanager:
+    image: prom/alertmanager
+    container_name: smartorder_alertmanager
+    volumes:
+      - ./docker/monitoring/alertmanager/config.yml:/etc/alertmanager/config.yml
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+    ports:
+      - "9093:9093"
+    networks:
+      - smartorder-net
+
+    # 7) Jira Notifier (Python Flask app)
+  jira-notifier:
+    build:
+      context: ./src/main/java/ynov/smartorder/api/jiranotifier
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/main/java/ynov/smartorder/api/jiranotifier/.env:/app/.env
+      - /var/run/docker.sock:/var/run/docker.sock
+    container_name: jira_notifier
+    ports:
+      - "5000:5000"
+    networks:
+      - smartorder-net
+
+networks:
+  smartorder-net:
+    driver: bridge

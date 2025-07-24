@@ -1,13 +1,11 @@
 version: '3.8'
-name: smartorder-postgres
+
 services:
   postgres-db:
-    image: postgres:15
+    build:
+      context: .
+      dockerfile: Dockerfile    # pointe sur le Dockerfile à la racine
     container_name: postgres_smartorder
-    environment:
-      POSTGRES_DB: smartOrder
-      POSTGRES_USER: smartorder_user
-      POSTGRES_PASSWORD: V82g!dxgZ!tR9#qm
     ports:
       - "5432:5432"
     volumes:
@@ -20,3 +18,4 @@ volumes:
 
 networks:
   backend-net:
+    driver: bridge

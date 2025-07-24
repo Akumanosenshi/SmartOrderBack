@@ -1,0 +1,5 @@
+FROM postgres:15
+
+ENV POSTGRES_USER=smartorder_user \
+    POSTGRES_PASSWORD=V82g!dxgZ!tR9#qm \
+    POSTGRES_DB=smartorder

@@ -28,7 +28,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain chain) throws ServletException, IOException {
 
         String path = request.getServletPath();
-        if (path.startsWith("/auth/")) {
+
+        // ✅ Ignore les endpoints publics
+        if (path.startsWith("/auth/") || path.startsWith("/actuator")) {
             chain.doFilter(request, response);
             return;
         }
@@ -54,7 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 new UsernamePasswordAuthenticationToken(
                         email,
                         null,
-                        List.of(new SimpleGrantedAuthority("ROLE_" + role)) // 🔥 RÔLE FORMAT SPRING SECURITY
+                        List.of(new SimpleGrantedAuthority("ROLE_" + role))
                 );
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -62,5 +64,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
-
 }

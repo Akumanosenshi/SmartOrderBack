@@ -1,0 +1,8 @@
+route:
+  receiver: 'jira'
+
+receivers:
+  - name: 'jira'
+    webhook_configs:
+      - url: 'http://jira-notifier:5000/alert'
+        send_resolved: true

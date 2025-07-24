@@ -1,4 +1,5 @@
 package ynov.smartorder.api.web.controller;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,7 +28,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,6 +38,8 @@ class StatisticControllerTest implements WithRandom {
     @Mock private ReservationRepository reservationRepository;
     @Mock private StatisticDtoMapper statisticDtoMapper;
     @Mock private MealDtoMapper mealDtoMapper;
+    @Mock private MeterRegistry meterRegistry;
+
 
     @InjectMocks
     private StatisticController statisticController;

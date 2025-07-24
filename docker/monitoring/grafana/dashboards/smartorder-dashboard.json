@@ -1,0 +1,232 @@
+{
+  "id": null,
+  "uid": "smartorder-dashboard-complet",
+  "title": "SmartOrder Monitoring Dashboard (Complet)",
+  "tags": [
+    "smartorder",
+    "metrics"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total Orders",
+      "id": 1,
+      "targets": [
+        {
+          "expr": "smartorder_total_orders",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Total Revenue (\u20ac)",
+      "id": 2,
+      "targets": [
+        {
+          "expr": "smartorder_total_revenue",
+          "refId": "B"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Average Cart (\u20ac)",
+      "id": 3,
+      "targets": [
+        {
+          "expr": "smartorder_average_cart",
+          "refId": "C"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Total Reservations",
+      "id": 4,
+      "targets": [
+        {
+          "expr": "smartorder_total_reservations",
+          "refId": "D"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Avg People/Reservation",
+      "id": 5,
+      "targets": [
+        {
+          "expr": "smartorder_avg_people_per_reservation",
+          "refId": "E"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "type": "graph",
+      "title": "CPU Usage %",
+      "id": 10,
+      "targets": [
+        {
+          "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100)",
+          "refId": "J"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "RAM Usage %",
+      "id": 11,
+      "targets": [
+        {
+          "expr": "100 - ((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100)",
+          "refId": "K"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Process CPU Usage",
+      "id": 12,
+      "targets": [
+        {
+          "expr": "process_cpu_usage",
+          "refId": "L"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Top IP Clients (SmartOrder)",
+      "id": 20,
+      "targets": [
+        {
+          "expr": "topk(10, smartorder_requests_by_ip_total)",
+          "refId": "T"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "__name__": true
+            }
+          }
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "value"
+          }
+        ]
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "État API /actuator/health",
+      "id": 999,
+      "targets": [
+        {
+          "expr": "probe_success{instance=\"http://app:8080/actuator/health\"}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "🟥 Hors service" },
+                "1": { "text": "🟩 OK" }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      }
+    }
+  ]
+}
